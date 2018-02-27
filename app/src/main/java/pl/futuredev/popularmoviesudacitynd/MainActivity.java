@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 
 import java.util.List;
@@ -17,26 +16,25 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import pl.futuredev.popularmoviesudacitynd.pojo.Movies;
-import pl.futuredev.popularmoviesudacitynd.pojo.WebService;
+import pl.futuredev.popularmoviesudacitynd.pojo.MovieList;
+import pl.futuredev.popularmoviesudacitynd.pojo.APIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private WebService service;
-    private Movies movies;
+    private APIService service;
+    private MovieList movieList;
     private static final String CLASS_TAG = "TestActivity";
-    static List<Movies> items;
+    static List<MovieList> items;
 
     @BindView(R.id.button_test)
     Button buttonTest;
     @BindView(R.id.my_recycler_view)
-    RecyclerView myRecyclerView;
+    RecyclerView recyclerView;
 
 
     @Override
@@ -51,22 +49,29 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        movies = null;
-        service = HttpConnector.getService(WebService.class);
+        movieList = null;
+        service = HttpConnector.getService(APIService.class);
 
         buttonTest.setOnClickListener(v -> {
             try {
-                service.getData().enqueue(new Callback<List<Movies>>() {
+                service.getPopularMovies().enqueue(new Callback<MovieList>() {
                     @Override
-                    public void onResponse(Call<List<Movies>> call, Response<List<Movies>> response) {
-                        items = response.body();
+                    public void onResponse(Call<MovieList> call, Response<MovieList> response) {
 
-                        adapter = new MovieAdapter(items);
+                        MovieList movieList = response.body();
+
+                        String[] movies = new String[movieList.size()];
+
+                        for (int i = 0; i < movieList.size(); i++) {
+                            movies[i] = movieList.get(i).getTitle();
+                        }
+
+                        adapter = new MovieAdapter(movies);
                         recyclerView.setAdapter(adapter);
                     }
 
                     @Override
-                    public void onFailure(Call<List<Movies>> call, Throwable t) {
+                    public void onFailure(Call<MovieList> call, Throwable t) {
                         Log.d(CLASS_TAG, t.getLocalizedMessage());
                     }
                 });

@@ -6,15 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
-
-import pl.futuredev.popularmoviesudacitynd.pojo.Movies;
+import pl.futuredev.popularmoviesudacitynd.pojo.MovieList;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder> {
 
-    private List<Movies> data;
+    private MovieList data;
 
-    public MovieAdapter(List<Movies> items) {
+    public MovieAdapter(MovieList items) {
         this.data = items;
     }
 

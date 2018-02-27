@@ -4,13 +4,14 @@ import android.support.annotation.NonNull;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import pl.futuredev.popularmoviesudacitynd.pojo.UrlManager;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class HttpConnector {
 
     private static Retrofit retrofit;
-    private static final String API_KEY = BuildConfig.API_KEY;
 
     private HttpConnector() {
     }
@@ -34,9 +35,9 @@ public class HttpConnector {
 
         okHttpClientBuilder.addInterceptor(logging);
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.themoviedb.org/3/movie/popular?api_key=" + API_KEY + "&language=en-US&page=1")
-                .client(okHttpClientBuilder.build())
-                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(UrlManager.BASE_URL)
+                .addConverterFactory
+                        (MoshiConverterFactory.create())
                 .build();
         return retrofit;
     }
