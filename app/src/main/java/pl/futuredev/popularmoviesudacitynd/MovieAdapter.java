@@ -51,12 +51,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
         ImageView imageView = holder.imageView;
 
         String imageUrl = UrlManager.IMAGE_BASE_URL;
-        String urlId = imageUrl + data.get(listPosition).getId();
-        String urlIdWithKey = urlId + UrlManager.API_KEY;
+        String urlId = imageUrl + data.get(listPosition).getBackdropPath();
 
         Context context = holder.imageView.getContext();
 
-        Picasso.with(context).load(urlIdWithKey).into(imageView);
+        Picasso.with(context).load(urlId).into(imageView);
 
     }
 
