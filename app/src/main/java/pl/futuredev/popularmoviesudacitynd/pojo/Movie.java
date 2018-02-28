@@ -3,35 +3,53 @@ package pl.futuredev.popularmoviesudacitynd.pojo;
 import java.util.List;
 import com.squareup.moshi.Json;
 
+import java.util.List;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Movie {
 
-    @Json(name = "vote_count")
+    @SerializedName("vote_count")
+    @Expose
     private Integer voteCount;
-    @Json(name = "id")
+    @SerializedName("id")
+    @Expose
     private Integer id;
-    @Json(name = "video")
+    @SerializedName("video")
+    @Expose
     private Boolean video;
-    @Json(name = "vote_average")
+    @SerializedName("vote_average")
+    @Expose
     private Double voteAverage;
-    @Json(name = "title")
+    @SerializedName("title")
+    @Expose
     private String title;
-    @Json(name = "popularity")
+    @SerializedName("popularity")
+    @Expose
     private Double popularity;
-    @Json(name = "poster_path")
+    @SerializedName("poster_path")
+    @Expose
     private String posterPath;
-    @Json(name = "original_language")
+    @SerializedName("original_language")
+    @Expose
     private String originalLanguage;
-    @Json(name = "original_title")
+    @SerializedName("original_title")
+    @Expose
     private String originalTitle;
-    @Json(name = "genre_ids")
+    @SerializedName("genre_ids")
+    @Expose
     private List<Integer> genreIds = null;
-    @Json(name = "backdrop_path")
+    @SerializedName("backdrop_path")
+    @Expose
     private String backdropPath;
-    @Json(name = "adult")
+    @SerializedName("adult")
+    @Expose
     private Boolean adult;
-    @Json(name = "overview")
+    @SerializedName("overview")
+    @Expose
     private String overview;
-    @Json(name = "release_date")
+    @SerializedName("release_date")
+    @Expose
     private String releaseDate;
 
     public Integer getVoteCount() {

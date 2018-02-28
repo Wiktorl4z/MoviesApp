@@ -36,8 +36,7 @@ public class HttpConnector {
         okHttpClientBuilder.addInterceptor(logging);
         retrofit = new Retrofit.Builder()
                 .baseUrl(UrlManager.BASE_URL)
-                .addConverterFactory
-                        (MoshiConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
         return retrofit;
     }

@@ -11,11 +11,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import com.google.gson.Gson;
+import com.squareup.moshi.FromJson;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
+
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pl.futuredev.popularmoviesudacitynd.pojo.Movie;
 import pl.futuredev.popularmoviesudacitynd.pojo.MovieList;
 import pl.futuredev.popularmoviesudacitynd.pojo.APIService;
 import retrofit2.Call;
@@ -28,8 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private APIService service;
     private MovieList movieList;
+    private List<Movie> movie;
     private static final String CLASS_TAG = "TestActivity";
     static List<MovieList> items;
+    private MovieListJsonAdapter movieListJsonAdapter;
 
     @BindView(R.id.button_test)
     Button buttonTest;
@@ -49,24 +57,17 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        movieList = null;
         service = HttpConnector.getService(APIService.class);
 
         buttonTest.setOnClickListener(v -> {
             try {
-                service.getPopularMovies().enqueue(new Callback<MovieList>() {
+                service.getPopularMoviesList().enqueue(new Callback<MovieList>() {
                     @Override
                     public void onResponse(Call<MovieList> call, Response<MovieList> response) {
 
-                        MovieList movieList = response.body();
+                        movie = response.body().results;
 
-                        String[] movies = new String[movieList.size()];
-
-                        for (int i = 0; i < movieList.size(); i++) {
-                            movies[i] = movieList.get(i).getTitle();
-                        }
-
-                        adapter = new MovieAdapter(movies);
+                        adapter = new MovieAdapter(movie);
                         recyclerView.setAdapter(adapter);
                     }
 

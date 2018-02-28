@@ -2,18 +2,25 @@ package pl.futuredev.popularmoviesudacitynd.pojo;
 
 import java.util.List;
 
-import com.squareup.moshi.Json;
+import java.util.List;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class MovieList {
 
-    @Json(name = "page")
+    @SerializedName("page")
+    @Expose
     private Integer page;
-    @Json(name = "total_results")
+    @SerializedName("total_results")
+    @Expose
     private Integer totalResults;
-    @Json(name = "total_pages")
+    @SerializedName("total_pages")
+    @Expose
     private Integer totalPages;
-    @Json(name = "results")
-    private List<Movie> results = null;
+    @SerializedName("results")
+    @Expose
+    public List<Movie> results = null;
 
     public Integer getPage() {
         return page;
