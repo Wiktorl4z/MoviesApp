@@ -2,51 +2,66 @@ package pl.futuredev.popularmoviesudacitynd;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import pl.futuredev.popularmoviesudacitynd.pojo.Movie;
-import pl.futuredev.popularmoviesudacitynd.pojo.MovieList;
-import pl.futuredev.popularmoviesudacitynd.pojo.UrlManager;
-import retrofit2.http.Url;
+import pl.futuredev.popularmoviesudacitynd.models.Movie;
+import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder> {
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
     private List<Movie> data;
 
-    public MovieAdapter(List<Movie> items) {
-        this.data = items;
+    public MovieAdapter(List<Movie> data) {
+        this.data = data;
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        public ViewHolder.IMyViewHolderClicks mListener;
         ImageView imageView;
 
-        public MyViewHolder(View itemView) {
+        public ViewHolder(View itemView, IMyViewHolderClicks vegetables) {
             super(itemView);
-            this.imageView = itemView.findViewById(R.id.iv_image);
+            this.imageView = itemView.findViewById(R.id.iv_image_single);
+        }
+
+        public static interface IMyViewHolderClicks {
+            public void onImage(ImageView callerImage);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v instanceof ImageView) {
+                mListener.onImage((ImageView) v);
+            }
         }
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                           int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_layout, parent, false);
 
-        MyViewHolder myViewHolder = new MyViewHolder(view);
-        return myViewHolder;
+        ViewHolder vh = new ViewHolder(view, new ViewHolder.IMyViewHolderClicks() {
+
+            @Override
+            public void onImage(ImageView callerImage) {
+                Log.d("Working Image", "I-M-A-G-E");
+            }
+        });
+        return vh;
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, final int listPosition) {
+    public void onBindViewHolder(final ViewHolder holder, final int listPosition) {
 
         ImageView imageView = holder.imageView;
 

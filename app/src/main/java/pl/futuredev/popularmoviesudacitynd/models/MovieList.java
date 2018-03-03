@@ -1,6 +1,4 @@
-package pl.futuredev.popularmoviesudacitynd.pojo;
-
-import java.util.List;
+package pl.futuredev.popularmoviesudacitynd.models;
 
 import java.util.List;
 

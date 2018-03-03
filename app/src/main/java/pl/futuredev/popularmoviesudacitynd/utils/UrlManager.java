@@ -1,4 +1,4 @@
-package pl.futuredev.popularmoviesudacitynd.pojo;
+package pl.futuredev.popularmoviesudacitynd.utils;
 
 import pl.futuredev.popularmoviesudacitynd.BuildConfig;
 

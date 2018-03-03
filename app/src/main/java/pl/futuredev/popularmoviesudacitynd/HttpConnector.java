@@ -4,10 +4,9 @@ import android.support.annotation.NonNull;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import pl.futuredev.popularmoviesudacitynd.pojo.UrlManager;
+import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class HttpConnector {
 

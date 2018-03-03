@@ -1,5 +1,6 @@
 package pl.futuredev.popularmoviesudacitynd;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -9,21 +10,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
-
-import com.google.gson.Gson;
-import com.squareup.moshi.FromJson;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import pl.futuredev.popularmoviesudacitynd.pojo.Movie;
-import pl.futuredev.popularmoviesudacitynd.pojo.MovieList;
-import pl.futuredev.popularmoviesudacitynd.pojo.APIService;
+import pl.futuredev.popularmoviesudacitynd.models.Movie;
+import pl.futuredev.popularmoviesudacitynd.models.MovieList;
+import pl.futuredev.popularmoviesudacitynd.models.APIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private List<Movie> movie;
     private static final String CLASS_TAG = "TestActivity";
     static List<MovieList> items;
-    private MovieListJsonAdapter movieListJsonAdapter;
 
     @BindView(R.id.button_test)
     Button buttonTest;
@@ -59,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
         service = HttpConnector.getService(APIService.class);
 
-        buttonTest.setOnClickListener(v -> {
+        buttonTest.setOnClickListener((View v) -> {
             try {
                 service.getPopularMoviesList().enqueue(new Callback<MovieList>() {
                     @Override
@@ -69,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
                         adapter = new MovieAdapter(movie);
                         recyclerView.setAdapter(adapter);
+
                     }
 
                     @Override
@@ -80,7 +77,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(CLASS_TAG, e.toString());
             }
         });
+
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

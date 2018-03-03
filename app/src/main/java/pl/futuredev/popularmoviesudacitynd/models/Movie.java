@@ -1,9 +1,7 @@
-package pl.futuredev.popularmoviesudacitynd.pojo;
+package pl.futuredev.popularmoviesudacitynd.models;
 
 import java.util.List;
-import com.squareup.moshi.Json;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
