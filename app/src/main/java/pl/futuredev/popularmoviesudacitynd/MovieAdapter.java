@@ -23,25 +23,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         this.data = data;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ViewHolder.IMyViewHolderClicks mListener;
         ImageView imageView;
 
-        public ViewHolder(View itemView, IMyViewHolderClicks vegetables) {
+        public ViewHolder(View itemView) {
             super(itemView);
             this.imageView = itemView.findViewById(R.id.iv_image_single);
-        }
-
-        public static interface IMyViewHolderClicks {
-            public void onImage(ImageView callerImage);
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (v instanceof ImageView) {
-                mListener.onImage((ImageView) v);
-            }
         }
     }
 
@@ -50,14 +38,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_layout, parent, false);
 
-        ViewHolder vh = new ViewHolder(view, new ViewHolder.IMyViewHolderClicks() {
-
-            @Override
-            public void onImage(ImageView callerImage) {
-                Log.d("Working Image", "I-M-A-G-E");
-            }
-        });
-        return vh;
+        return new ViewHolder(view);
     }
 
     @Override
