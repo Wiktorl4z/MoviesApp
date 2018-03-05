@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
                         movie = response.body().results;
 
-                        adapter = new MovieAdapter(movie, this);
+                        adapter = new MovieAdapter(movie, MainActivity.this::onClick);
                         recyclerView.setAdapter(adapter);
 
                     }
