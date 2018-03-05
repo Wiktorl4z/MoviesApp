@@ -1,11 +1,9 @@
 package pl.futuredev.popularmoviesudacitynd;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
@@ -13,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -26,7 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -35,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Movie> movie;
     private static final String CLASS_TAG = "TestActivity";
     static List<MovieList> items;
+    private Toast toast;
 
     @BindView(R.id.button_test)
     Button buttonTest;
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
                         movie = response.body().results;
 
-                        adapter = new MovieAdapter(movie);
+                        adapter = new MovieAdapter(movie, this);
                         recyclerView.setAdapter(adapter);
 
                     }
@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
 
 
     @Override
@@ -105,5 +104,13 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_test)
     public void onViewClicked() {
+    }
+
+
+    @Override
+    public void onClick(int clickedItemIndex) {
+        String toastMessage = "Item #" + clickedItemIndex + " clicked.";
+        toast = Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT);
+        toast.show();
     }
 }

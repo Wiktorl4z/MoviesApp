@@ -2,7 +2,6 @@ package pl.futuredev.popularmoviesudacitynd;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,18 +17,31 @@ import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
     private List<Movie> data;
+    private final MovieAdapterOnClickHandler listClickHandler;
 
-    public MovieAdapter(List<Movie> data) {
-        this.data = data;
+    public interface MovieAdapterOnClickHandler {
+        void onClick(int clickedItemIndex);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public MovieAdapter(List<Movie> data, MovieAdapterOnClickHandler listClickHandler) {
+        this.data = data;
+        this.listClickHandler = listClickHandler;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView imageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.imageView = itemView.findViewById(R.id.iv_image_single);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int clickPosition = getAdapterPosition();
+            listClickHandler.onClick(clickPosition);
         }
     }
 
@@ -47,7 +59,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         ImageView imageView = holder.imageView;
 
         String imageUrl = UrlManager.IMAGE_BASE_URL;
-        String urlId = imageUrl + data.get(listPosition).getBackdropPath();
+        String urlId = imageUrl + data.get(listPosition).getPosterPath();
 
         Context context = holder.imageView.getContext();
 
