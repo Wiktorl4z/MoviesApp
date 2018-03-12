@@ -5,8 +5,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pl.futuredev.popularmoviesudacitynd.models.Movie;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -20,6 +23,7 @@ public class DetailActivity extends AppCompatActivity {
     TextView tvVoteAverage;
     @BindView(R.id.tv_plot_synopsis)
     TextView tvPlotSynopsis;
+    private List<Movie> movie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +32,7 @@ public class DetailActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
 
-
+        movie = getIntent().getExtras().getParcelable("foo");
 
 
     }

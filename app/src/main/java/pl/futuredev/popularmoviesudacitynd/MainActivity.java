@@ -1,6 +1,8 @@
 package pl.futuredev.popularmoviesudacitynd;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -109,8 +111,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     @Override
     public void onClick(int clickedItemIndex) {
-        String toastMessage = "Item #" + clickedItemIndex + " clicked.";
-        toast = Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT);
-        toast.show();
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra("movie", (Parcelable) movie);
+        startActivity(intent);
     }
 }
