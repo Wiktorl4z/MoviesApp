@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     @Override
     public void onClick(int clickedItemIndex) {
         Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra("movie", (Parcelable) movie);
+        intent.putExtra("movie", movie.get(clickedItemIndex));
         startActivity(intent);
     }
 }
