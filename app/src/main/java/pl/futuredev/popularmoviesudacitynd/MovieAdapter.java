@@ -63,7 +63,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
         Context context = holder.imageView.getContext();
 
-        Picasso.with(context).load(urlId).into(imageView);
+        Picasso.get().load(urlId).into(imageView);
 
     }
 

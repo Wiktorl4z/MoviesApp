@@ -40,7 +40,7 @@ public class DetailActivity extends AppCompatActivity {
         populateUI(movie);
     }
 
-    private void populateUI(Movie movie){
+    private void populateUI(Movie movie) {
 
         tvTitle.setText(movie.getTitle());
         tvReleaseDate.setText(movie.getReleaseDate());
@@ -48,7 +48,6 @@ public class DetailActivity extends AppCompatActivity {
         Picasso.get().load(movie.getBackdropPath()).into(ivMoviePoster);
 
         tvPlotSynopsis.setText(movie.getOverview());
-        tvVoteAverage.setText(String.valueOf(movie.getVoteAverage()));
+        tvVoteAverage.setText(movie.getVoteAverage()+"");
     }
-
 }
