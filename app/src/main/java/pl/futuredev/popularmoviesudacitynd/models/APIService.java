@@ -12,10 +12,4 @@ public interface APIService {
     @GET(UrlManager.TOP_RATED)
     Call<MovieList> getTopRatedMovies();
 
-    @GET(UrlManager.POPULAR)
-    Call<Movie> getPopularMovie();
-
-    @GET(UrlManager.TOP_RATED)
-    Call<Movie> getTopRatedMovie();
-
 }

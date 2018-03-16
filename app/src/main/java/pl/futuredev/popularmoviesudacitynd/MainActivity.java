@@ -2,27 +2,23 @@ package pl.futuredev.popularmoviesudacitynd;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
+import pl.futuredev.popularmoviesudacitynd.models.APIService;
 import pl.futuredev.popularmoviesudacitynd.models.Movie;
 import pl.futuredev.popularmoviesudacitynd.models.MovieList;
-import pl.futuredev.popularmoviesudacitynd.models.APIService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,11 +34,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     static List<MovieList> items;
     private Toast toast;
 
-    @BindView(R.id.button_test)
-    Button buttonTest;
     @BindView(R.id.my_recycler_view)
     RecyclerView recyclerView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,32 +49,62 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         service = HttpConnector.getService(APIService.class);
-
-        buttonTest.setOnClickListener((View v) -> {
-            try {
-                service.getPopularMoviesList().enqueue(new Callback<MovieList>() {
-                    @Override
-                    public void onResponse(Call<MovieList> call, Response<MovieList> response) {
-
-                        movie = response.body().results;
-
-                        adapter = new MovieAdapter(movie, MainActivity.this::onClick);
-                        recyclerView.setAdapter(adapter);
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<MovieList> call, Throwable t) {
-                        Log.d(CLASS_TAG, t.getLocalizedMessage());
-                    }
-                });
-            } catch (Exception e) {
-                Log.d(CLASS_TAG, e.toString());
-            }
-        });
-
+        popularMovieListFromService();
     }
 
+    private void popularMovieListFromService() {
+        service.getPopularMoviesList().enqueue(new Callback<MovieList>() {
+            @Override
+            public void onResponse(Call<MovieList> call, Response<MovieList> response) {
+
+                if (response.isSuccessful()) {
+                    movie = response.body().results;
+                    adapter = new MovieAdapter(movie, MainActivity.this::onClick);
+                    recyclerView.setAdapter(adapter);
+                } else {
+                    try {
+                        Toast.makeText(MainActivity.this, response.errorBody().string(), Toast.LENGTH_SHORT)
+                                .show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MovieList> call, Throwable t) {
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
+    };
+
+    private void topRatedMoviesFromService() {
+        service.getTopRatedMovies().enqueue(new Callback<MovieList>() {
+            @Override
+            public void onResponse(Call<MovieList> call, Response<MovieList> response) {
+
+                if (response.isSuccessful()) {
+                    movie = response.body().results;
+                    adapter = new MovieAdapter(movie, MainActivity.this::onClick);
+                    recyclerView.setAdapter(adapter);
+                } else {
+                    try {
+                        Toast.makeText(MainActivity.this, response.errorBody().string(), Toast.LENGTH_SHORT)
+                                .show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MovieList> call, Throwable t) {
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,18 +119,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         switch (id) {
             case R.id.top_rated:
+                topRatedMoviesFromService();
                 return true;
             case R.id.popular:
+                popularMovieListFromService();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    @OnClick(R.id.button_test)
-    public void onViewClicked() {
-    }
-
 
     @Override
     public void onClick(int clickedItemIndex) {

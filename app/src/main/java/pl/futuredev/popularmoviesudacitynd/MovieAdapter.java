@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.squareup.picasso.Picasso;
 
@@ -31,10 +32,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView imageView;
+        ProgressBar progressBar;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.imageView = itemView.findViewById(R.id.iv_image_single);
+            this.progressBar = itemView.findViewById(R.id.progressBar);
             itemView.setOnClickListener(this);
         }
 
@@ -57,11 +60,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     public void onBindViewHolder(final ViewHolder holder, final int listPosition) {
 
         ImageView imageView = holder.imageView;
+        ProgressBar progressBar = holder.progressBar;
 
         String imageUrl = UrlManager.IMAGE_BASE_URL;
         String urlId = imageUrl + data.get(listPosition).getPosterPath();
 
         Context context = holder.imageView.getContext();
+
+        progressBar.setVisibility(View.GONE);
 
         Picasso.get().load(urlId).into(imageView);
 
@@ -71,4 +77,5 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     public int getItemCount() {
         return data.size();
     }
+
 }

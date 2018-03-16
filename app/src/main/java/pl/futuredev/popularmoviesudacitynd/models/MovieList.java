@@ -3,10 +3,10 @@ package pl.futuredev.popularmoviesudacitynd.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.List;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class MovieList implements Parcelable {
 

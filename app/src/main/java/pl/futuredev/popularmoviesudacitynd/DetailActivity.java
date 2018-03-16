@@ -8,11 +8,10 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.futuredev.popularmoviesudacitynd.models.Movie;
+import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -26,7 +25,6 @@ public class DetailActivity extends AppCompatActivity {
     TextView tvVoteAverage;
     @BindView(R.id.tv_plot_synopsis)
     TextView tvPlotSynopsis;
-    private Movie movie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,20 +32,21 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
 
-
         Intent intent = getIntent();
-        movie = intent.getParcelableExtra("movie");
+        Movie movie = intent.getParcelableExtra("movie");
         populateUI(movie);
     }
 
     private void populateUI(Movie movie) {
 
-        tvTitle.setText(movie.getTitle());
-        tvReleaseDate.setText(movie.getReleaseDate());
+        String imageUrl = UrlManager.IMAGE_BASE_URL;
 
-        Picasso.get().load(movie.getBackdropPath()).into(ivMoviePoster);
+        tvTitle.setText(getString(R.string.title) + movie.getTitle());
+        tvReleaseDate.setText(getString(R.string.release_date) + movie.getReleaseDate());
 
-        tvPlotSynopsis.setText(movie.getOverview());
-        tvVoteAverage.setText(movie.getVoteAverage()+"");
+        Picasso.get().load(imageUrl + movie.getBackdropPath()).into(ivMoviePoster);
+
+        tvPlotSynopsis.setText(getString(R.string.plot_synopsis) + movie.getOverview());
+        tvVoteAverage.setText(getString(R.string.vote_average) + movie.getVoteAverage());
     }
 }
