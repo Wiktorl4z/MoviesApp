@@ -1,24 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<android.support.v4.widget.NestedScrollView android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true"
-    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/iv_movie_poster"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/movie_poster"
-            android:scaleType="centerCrop" />
+        android:orientation="vertical"
+        tools:context=".DetailActivity">
 
         <TextView
             android:id="@+id/tv_title"
@@ -48,9 +35,9 @@
         <CheckBox
             android:id="@+id/favoriteBox"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_height="wrap_content"
             android:text="@string/favorite" />
 
         <TextView
@@ -61,6 +48,9 @@
             android:layout_marginTop="8dp"
             android:hint="@string/plot_synopsis" />
 
-    </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loremipsum"/>
 
-</android.support.v4.widget.NestedScrollView>
+    </LinearLayout>
