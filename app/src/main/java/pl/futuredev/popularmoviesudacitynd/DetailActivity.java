@@ -1,7 +1,11 @@
 package pl.futuredev.popularmoviesudacitynd;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -22,6 +26,7 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pl.futuredev.popularmoviesudacitynd.MoviesContract.MoviesDateBase;
 import pl.futuredev.popularmoviesudacitynd.models.Movie;
 import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 
@@ -48,6 +53,8 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.fab)
     FloatingActionButton fab;
 
+    private SQLiteOpenHelper mDbHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +80,44 @@ public class DetailActivity extends AppCompatActivity {
                         .parseColor("#ff0000")));
                 Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+
+                insertingIntoDataBase(movie);
             }
         });
 
+    }
+
+    private void readingFromDataBase() {
+
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                MoviesDateBase._ID
+        };
+
+        Cursor cursor = db.query(
+                MoviesDateBase.TABLE_NAME,                 // The table to query
+                projection,                               // The columns to return
+                null,                             // The columns for the WHERE clause
+                null,                          // The values for the WHERE clause
+                null,                             // don't group the rows
+                null,                              // don't filter by row groups
+                null                              // The sort order
+        );
+    }
+
+    private void insertingIntoDataBase(Movie movie) {
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(MoviesDateBase.MOVIE_TITLE, movie.getTitle());
+        values.put(MoviesDateBase.MOVIE_ID, movie.getId());
+        values.put(MoviesDateBase.MOVIE_IMAGE, movie.getPosterPath());
+
+
+        long newRowId = db.insert(MoviesDateBase.TABLE_NAME, null, values);
     }
 
     private void populateUI(Movie movie) {
@@ -90,4 +132,6 @@ public class DetailActivity extends AppCompatActivity {
         tvPlotSynopsis.setText(getString(R.string.plot_synopsis) + movie.getOverview());
         tvVoteAverage.setText(getString(R.string.vote_average) + movie.getVoteAverage());
     }
+
+
 }
