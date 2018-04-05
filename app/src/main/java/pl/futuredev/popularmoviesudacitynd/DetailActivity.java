@@ -1,5 +1,6 @@
 package pl.futuredev.popularmoviesudacitynd;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -7,16 +8,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -26,7 +25,8 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import pl.futuredev.popularmoviesudacitynd.MoviesContract.MoviesDateBase;
+import pl.futuredev.popularmoviesudacitynd.data.MoviesContract;
+import pl.futuredev.popularmoviesudacitynd.data.MoviesContract.MoviesDateBase;
 import pl.futuredev.popularmoviesudacitynd.models.Movie;
 import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 
@@ -54,7 +54,8 @@ public class DetailActivity extends AppCompatActivity {
     FloatingActionButton fab;
 
     private SQLiteOpenHelper mDbHelper;
-
+    private Cursor mData;
+    private int mMovieID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,16 +74,23 @@ public class DetailActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.fab);
 
+        new ContentProviderAsyncTask().execute();
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fab.setBackgroundTintList(ColorStateList.valueOf(Color
-                        .parseColor("#ff0000")));
                 Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
+                if (mMovieID == movie.getId()) {
+                    fab.setBackgroundTintList(ColorStateList.valueOf(Color
+                            .parseColor("##eaf6f7")));
+                } else {
+                    insertingIntoDataBase(movie);
+                    fab.setBackgroundTintList(ColorStateList.valueOf(Color
+                            .parseColor("#ff0000")));
+                }
 
-                insertingIntoDataBase(movie);
             }
         });
 
@@ -116,7 +124,6 @@ public class DetailActivity extends AppCompatActivity {
         values.put(MoviesDateBase.MOVIE_ID, movie.getId());
         values.put(MoviesDateBase.MOVIE_IMAGE, movie.getPosterPath());
 
-
         long newRowId = db.insert(MoviesDateBase.TABLE_NAME, null, values);
     }
 
@@ -133,5 +140,33 @@ public class DetailActivity extends AppCompatActivity {
         tvVoteAverage.setText(getString(R.string.vote_average) + movie.getVoteAverage());
     }
 
+
+    private class ContentProviderAsyncTask extends AsyncTask<Void, Void, Cursor> {
+        @Override
+        protected Cursor doInBackground(Void... voids) {
+            ContentResolver resolver = getContentResolver();
+
+            Cursor cursor = resolver.query(MoviesContract.BASE_CONTENT_URI,
+                    null, null, null, null);
+            return cursor;
+        }
+
+        @Override
+        protected void onPostExecute(Cursor cursor) {
+            super.onPostExecute(cursor);
+
+            mData = cursor;
+            mMovieID = mData.getColumnIndex(MoviesDateBase.MOVIE_ID);
+            nextWord();
+        }
+
+        public void nextWord() {
+            if (mData != null) {
+                if (!mData.moveToNext()) {
+                    mData.moveToFirst();
+                }
+            }
+        }
+    }
 
 }

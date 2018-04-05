@@ -1,11 +1,16 @@
-package pl.futuredev.popularmoviesudacitynd;
+package pl.futuredev.popularmoviesudacitynd.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 public class MoviesContract {
+
+    public static final String CONTENT_AUTHORITY = "pl.futuredev.popularmoviesudacitynd";
+
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static final class MoviesDateBase implements BaseColumns {
 
