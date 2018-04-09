@@ -26,7 +26,7 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.futuredev.popularmoviesudacitynd.data.MoviesContract;
-import pl.futuredev.popularmoviesudacitynd.data.MoviesContract.MoviesDateBase;
+import pl.futuredev.popularmoviesudacitynd.data.MoviesProvider;
 import pl.futuredev.popularmoviesudacitynd.models.Movie;
 import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 
@@ -90,7 +90,6 @@ public class DetailActivity extends AppCompatActivity {
                     fab.setBackgroundTintList(ColorStateList.valueOf(Color
                             .parseColor("#ff0000")));
                 }
-
             }
         });
 
@@ -101,17 +100,17 @@ public class DetailActivity extends AppCompatActivity {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String[] projection = {
-                MoviesDateBase._ID
+                MoviesContract.MoviesDateBase._ID
         };
 
         Cursor cursor = db.query(
-                MoviesDateBase.TABLE_NAME,                 // The table to query
-                projection,                               // The columns to return
-                null,                             // The columns for the WHERE clause
-                null,                          // The values for the WHERE clause
-                null,                             // don't group the rows
-                null,                              // don't filter by row groups
-                null                              // The sort order
+                MoviesContract.MoviesDateBase.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
         );
     }
 
@@ -120,11 +119,11 @@ public class DetailActivity extends AppCompatActivity {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(MoviesDateBase.MOVIE_TITLE, movie.getTitle());
-        values.put(MoviesDateBase.MOVIE_ID, movie.getId());
-        values.put(MoviesDateBase.MOVIE_IMAGE, movie.getPosterPath());
+        values.put(MoviesContract.MoviesDateBase.MOVIE_TITLE, movie.getTitle());
+        values.put(MoviesContract.MoviesDateBase.MOVIE_ID, movie.getId());
+        values.put(MoviesContract.MoviesDateBase.MOVIE_IMAGE, movie.getPosterPath());
 
-        long newRowId = db.insert(MoviesDateBase.TABLE_NAME, null, values);
+        long newRowId = db.insert(MoviesContract.MoviesDateBase.TABLE_NAME, null, values);
     }
 
     private void populateUI(Movie movie) {
@@ -156,7 +155,7 @@ public class DetailActivity extends AppCompatActivity {
             super.onPostExecute(cursor);
 
             mData = cursor;
-            mMovieID = mData.getColumnIndex(MoviesDateBase.MOVIE_ID);
+            mMovieID = mData.getColumnIndex(MoviesContract.MoviesDateBase.MOVIE_ID);
             nextWord();
         }
 
