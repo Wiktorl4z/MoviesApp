@@ -98,7 +98,6 @@ public class DetailActivity extends AppCompatActivity {
     private void readingFromDataBase() {
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
         String[] projection = {
                 MoviesContract.MoviesDateBase._ID
         };
