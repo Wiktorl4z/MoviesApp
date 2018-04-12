@@ -32,7 +32,6 @@ public class MoviesProvider extends ContentProvider{
         return uriMatcher;
     }
 
-
     @Override
     public boolean onCreate() {
         moviesDbHelper = new MoviesDbHelper(getContext());

@@ -20,7 +20,6 @@ public class MoviesContract {
         public static final String TABLE_NAME = "favouriteList";
         public static final String MOVIE_TITLE = "movieTitle";
         public static final String MOVIE_ID = "movieId";
-        public static final String MOVIE_IMAGE = "moveImage";
 
     }
 

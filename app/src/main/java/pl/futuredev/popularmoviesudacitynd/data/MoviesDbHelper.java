@@ -18,8 +18,7 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         final String SQL_CREATE_FAV_TABLE = "CREATE TABLE " + MoviesContract.MoviesDateBase.TABLE_NAME + " (" +
                 MoviesContract.MoviesDateBase.MOVIE_ID + " INTEGER NOT NULL, " +
-                MoviesContract.MoviesDateBase.MOVIE_TITLE + " TEXT NOT NULL, " +
-                MoviesContract.MoviesDateBase.MOVIE_IMAGE + " INTEGER NOT NULL " +
+                MoviesContract.MoviesDateBase.MOVIE_TITLE + " TEXT NOT NULL " +
                 ");";
 
         db.execSQL(SQL_CREATE_FAV_TABLE);

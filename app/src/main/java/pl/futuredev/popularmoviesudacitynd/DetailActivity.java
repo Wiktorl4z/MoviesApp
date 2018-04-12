@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -20,13 +21,13 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.futuredev.popularmoviesudacitynd.data.MoviesContract;
-import pl.futuredev.popularmoviesudacitynd.data.MoviesProvider;
 import pl.futuredev.popularmoviesudacitynd.models.Movie;
 import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 
@@ -56,6 +57,7 @@ public class DetailActivity extends AppCompatActivity {
     private SQLiteOpenHelper mDbHelper;
     private Cursor mData;
     private int mMovieID;
+    private int movieId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,19 +78,27 @@ public class DetailActivity extends AppCompatActivity {
 
         new ContentProviderAsyncTask().execute();
 
+        movieId = movie.getId();
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
-                if (mMovieID == movie.getId()) {
+                if (mMovieID == movieId) {
                     fab.setBackgroundTintList(ColorStateList.valueOf(Color
                             .parseColor("##eaf6f7")));
+
+                    String idString = "" + movieId;
+                    Uri uri = MoviesContract.MoviesDateBase.CONTENT_URI;
+                    uri = uri.buildUpon().appendPath(idString).build();
+                    getContentResolver().delete(uri, null, null);
                 } else {
-                    insertingIntoDataBase(movie);
                     fab.setBackgroundTintList(ColorStateList.valueOf(Color
                             .parseColor("#ff0000")));
+                    insertingIntoDataBase(movie);
+
                 }
             }
         });
@@ -115,14 +125,17 @@ public class DetailActivity extends AppCompatActivity {
 
     private void insertingIntoDataBase(Movie movie) {
 
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MoviesContract.MoviesDateBase.MOVIE_TITLE, movie.getTitle());
+        contentValues.put(MoviesContract.MoviesDateBase.MOVIE_ID, movie.getId());
+        //  contentValues.put(MoviesContract.MoviesDateBase.MOVIE_IMAGE, movie.getPosterPath());
 
-        ContentValues values = new ContentValues();
-        values.put(MoviesContract.MoviesDateBase.MOVIE_TITLE, movie.getTitle());
-        values.put(MoviesContract.MoviesDateBase.MOVIE_ID, movie.getId());
-        values.put(MoviesContract.MoviesDateBase.MOVIE_IMAGE, movie.getPosterPath());
+        Uri uri = getContentResolver().insert(MoviesContract.MoviesDateBase.CONTENT_URI, contentValues);
 
-        long newRowId = db.insert(MoviesContract.MoviesDateBase.TABLE_NAME, null, values);
+        if (uri != null) {
+            Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_SHORT).show();
+        }
+        finish();
     }
 
     private void populateUI(Movie movie) {
