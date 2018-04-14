@@ -31,6 +31,9 @@ import pl.futuredev.popularmoviesudacitynd.data.MoviesContract;
 import pl.futuredev.popularmoviesudacitynd.models.Movie;
 import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 
+import static pl.futuredev.popularmoviesudacitynd.data.MoviesContract.BASE_CONTENT_URI;
+import static pl.futuredev.popularmoviesudacitynd.data.MoviesContract.PATH_MOVIES;
+
 public class DetailActivity extends AppCompatActivity {
 
     @BindView(R.id.tv_title)
@@ -58,6 +61,7 @@ public class DetailActivity extends AppCompatActivity {
     private Cursor mData;
     private int mMovieID;
     private int movieId;
+    String movieID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +80,10 @@ public class DetailActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.fab);
 
+        movieId = movie.getId();
+        movieID = String.valueOf(movie.getId());
         new ContentProviderAsyncTask().execute();
 
-        movieId = movie.getId();
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,7 +162,12 @@ public class DetailActivity extends AppCompatActivity {
         protected Cursor doInBackground(Void... voids) {
             ContentResolver resolver = getContentResolver();
 
-            Cursor cursor = resolver.query(MoviesContract.BASE_CONTENT_URI,
+            Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                    .appendPath(PATH_MOVIES)
+                    .appendPath(movieID + "")
+                    .build();
+
+            Cursor cursor = resolver.query(CONTENT_URI,
                     null, null, null, null);
             return cursor;
         }
@@ -180,4 +190,9 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+    }
 }
