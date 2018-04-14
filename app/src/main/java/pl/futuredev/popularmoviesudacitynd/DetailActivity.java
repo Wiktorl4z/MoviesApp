@@ -59,9 +59,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private SQLiteOpenHelper mDbHelper;
     private Cursor mData;
-    private int mMovieID;
     private int movieId;
-    String movieID;
     boolean isFavourite;
 
     @Override
@@ -82,7 +80,6 @@ public class DetailActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
 
         movieId = movie.getId();
-        movieID = String.valueOf(movie.getId());
         new ContentProviderAsyncTask().execute();
 
 
@@ -93,15 +90,16 @@ public class DetailActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
 
                 if (isFavourite) {
-
                     Uri uri = BASE_CONTENT_URI.buildUpon()
                             .appendPath(PATH_MOVIES)
                             .appendPath(movieId + "")
                             .build();
-
                     getContentResolver().delete(uri, null, null);
+                    isFavourite = false;
                     updateFavouriteState();
+
                 } else {
+                    isFavourite = true;
                     insertingIntoDataBase(movie);
                     updateFavouriteState();
                 }
@@ -164,7 +162,7 @@ public class DetailActivity extends AppCompatActivity {
 
             Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
                     .appendPath(PATH_MOVIES)
-                    .appendPath(movieID)
+                    .appendPath(movieId + "")
                     .build();
 
             Cursor cursor = resolver.query(CONTENT_URI,
@@ -194,7 +192,6 @@ public class DetailActivity extends AppCompatActivity {
             fab.setBackgroundTintList(ColorStateList.valueOf(Color
                     .parseColor("#cdf7fb")));
         }
-
     }
 
     @Override

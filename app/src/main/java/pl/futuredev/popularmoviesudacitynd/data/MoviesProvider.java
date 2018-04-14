@@ -59,7 +59,7 @@ public class MoviesProvider extends ContentProvider{
                 break;
                 case CODE_MOVIE_WITH_ID:
                     String id = uri.getPathSegments().get(1);
-                    String mSelection = "_id=?";
+                    String mSelection = MoviesContract.MoviesDateBase.MOVIE_ID+"=?";
                     String[] mSelectionArgs = new String[]{id};
 
                     cursor = db.query(TABLE_NAME,
