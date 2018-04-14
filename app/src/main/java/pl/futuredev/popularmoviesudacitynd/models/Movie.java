@@ -11,8 +11,6 @@ import java.util.List;
 
 public class Movie implements Parcelable {
 
-
-
     @SerializedName("vote_count")
     @Expose
     private Integer voteCount;

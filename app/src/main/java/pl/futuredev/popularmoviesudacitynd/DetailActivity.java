@@ -62,6 +62,7 @@ public class DetailActivity extends AppCompatActivity {
     private int mMovieID;
     private int movieId;
     String movieID;
+    boolean isFavourite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,19 +92,18 @@ public class DetailActivity extends AppCompatActivity {
                 Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
-                if (mMovieID == movieId) {
-                    fab.setBackgroundTintList(ColorStateList.valueOf(Color
-                            .parseColor("##eaf6f7")));
+                if (isFavourite) {
 
-                    String idString = "" + movieId;
-                    Uri uri = MoviesContract.MoviesDateBase.CONTENT_URI;
-                    uri = uri.buildUpon().appendPath(idString).build();
+                    Uri uri = BASE_CONTENT_URI.buildUpon()
+                            .appendPath(PATH_MOVIES)
+                            .appendPath(movieId + "")
+                            .build();
+
                     getContentResolver().delete(uri, null, null);
+                    updateFavouriteState();
                 } else {
-                    fab.setBackgroundTintList(ColorStateList.valueOf(Color
-                            .parseColor("#ff0000")));
                     insertingIntoDataBase(movie);
-
+                    updateFavouriteState();
                 }
             }
         });
@@ -140,7 +140,7 @@ public class DetailActivity extends AppCompatActivity {
         if (uri != null) {
             Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_SHORT).show();
         }
-        finish();
+
     }
 
     private void populateUI(Movie movie) {
@@ -164,7 +164,7 @@ public class DetailActivity extends AppCompatActivity {
 
             Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
                     .appendPath(PATH_MOVIES)
-                    .appendPath(movieID + "")
+                    .appendPath(movieID)
                     .build();
 
             Cursor cursor = resolver.query(CONTENT_URI,
@@ -176,18 +176,25 @@ public class DetailActivity extends AppCompatActivity {
         protected void onPostExecute(Cursor cursor) {
             super.onPostExecute(cursor);
 
-            mData = cursor;
-            mMovieID = mData.getColumnIndex(MoviesContract.MoviesDateBase.MOVIE_ID);
-            nextWord();
+            if (cursor.getCount() != 0) {
+                isFavourite = true;
+            } else {
+                isFavourite = false;
+            }
+            updateFavouriteState();
         }
 
-        public void nextWord() {
-            if (mData != null) {
-                if (!mData.moveToNext()) {
-                    mData.moveToFirst();
-                }
-            }
+    }
+
+    private void updateFavouriteState() {
+        if (isFavourite) {
+            fab.setBackgroundTintList(ColorStateList.valueOf(Color
+                    .parseColor("#ff0000")));
+        } else {
+            fab.setBackgroundTintList(ColorStateList.valueOf(Color
+                    .parseColor("#cdf7fb")));
         }
+
     }
 
     @Override
