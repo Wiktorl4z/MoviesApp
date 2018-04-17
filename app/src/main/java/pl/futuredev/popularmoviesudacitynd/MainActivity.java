@@ -16,9 +16,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import pl.futuredev.popularmoviesudacitynd.models.APIService;
+import pl.futuredev.popularmoviesudacitynd.adapter.MovieAdapter;
+import pl.futuredev.popularmoviesudacitynd.service.APIService;
 import pl.futuredev.popularmoviesudacitynd.models.Movie;
 import pl.futuredev.popularmoviesudacitynd.models.MovieList;
+import pl.futuredev.popularmoviesudacitynd.service.HttpConnector;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,10 +51,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         service = HttpConnector.getService(APIService.class);
-        popularMovieListFromService();
+        popularMoviesListFromService();
     }
 
-    private void popularMovieListFromService() {
+    private void popularMoviesListFromService() {
         service.getPopularMoviesList().enqueue(new Callback<MovieList>() {
             @Override
             public void onResponse(Call<MovieList> call, Response<MovieList> response) {
@@ -122,11 +124,20 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 topRatedMoviesFromService();
                 return true;
             case R.id.popular:
-                popularMovieListFromService();
+                popularMoviesListFromService();
+                return true;
+            case R.id.favourite:
+                favouriteMoviesFromContentProvider();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void favouriteMoviesFromContentProvider() {
+        movie = response.body().results;
+        adapter = new MovieAdapter(movie, MainActivity.this::onClick);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override

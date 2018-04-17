@@ -60,7 +60,7 @@ public class DetailActivity extends AppCompatActivity {
     private SQLiteOpenHelper mDbHelper;
     private Cursor mData;
     private int movieId;
-    boolean isFavourite;
+    static boolean isFavourite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,30 +82,40 @@ public class DetailActivity extends AppCompatActivity {
         movieId = movie.getId();
         new ContentProviderAsyncTask().execute();
 
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        if (isFavourite) {
+                            deletingFavouriteState();
+                        } else {
+                            insertingIntoDataBase(movie);
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        super.onPostExecute(aVoid);
+                        colorSwicherForFAB();
+                    }
+                }.execute();
                 Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-
-                if (isFavourite) {
-                    Uri uri = BASE_CONTENT_URI.buildUpon()
-                            .appendPath(PATH_MOVIES)
-                            .appendPath(movieId + "")
-                            .build();
-                    getContentResolver().delete(uri, null, null);
-                    isFavourite = false;
-                    updateFavouriteState();
-
-                } else {
-                    isFavourite = true;
-                    insertingIntoDataBase(movie);
-                    updateFavouriteState();
-                }
             }
         });
 
+    }
+
+    private void deletingFavouriteState() {
+        ContentResolver resolver = getContentResolver();
+        Uri uri = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_MOVIES)
+                .appendPath(movieId + "")
+                .build();
+        resolver.delete(uri, null, null);
     }
 
     private void readingFromDataBase() {
@@ -142,29 +152,22 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void populateUI(Movie movie) {
-
         String imageUrl = UrlManager.IMAGE_BASE_URL;
-
         colapingToolbarLayout.setTitle(movie.getTitle());
         tvReleaseDate.setText(getString(R.string.release_date) + movie.getReleaseDate());
-
         Picasso.get().load(imageUrl + movie.getBackdropPath()).into(ivCollapsing);
-
         tvPlotSynopsis.setText(getString(R.string.plot_synopsis) + movie.getOverview());
         tvVoteAverage.setText(getString(R.string.vote_average) + movie.getVoteAverage());
     }
-
 
     private class ContentProviderAsyncTask extends AsyncTask<Void, Void, Cursor> {
         @Override
         protected Cursor doInBackground(Void... voids) {
             ContentResolver resolver = getContentResolver();
-
             Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
                     .appendPath(PATH_MOVIES)
                     .appendPath(movieId + "")
                     .build();
-
             Cursor cursor = resolver.query(CONTENT_URI,
                     null, null, null, null);
             return cursor;
@@ -173,18 +176,16 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Cursor cursor) {
             super.onPostExecute(cursor);
-
             if (cursor.getCount() != 0) {
                 isFavourite = true;
             } else {
                 isFavourite = false;
             }
-            updateFavouriteState();
+            colorSwicherForFAB();
         }
-
     }
 
-    private void updateFavouriteState() {
+    private void colorSwicherForFAB() {
         if (isFavourite) {
             fab.setBackgroundTintList(ColorStateList.valueOf(Color
                     .parseColor("#ff0000")));
@@ -197,6 +198,5 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-
     }
 }

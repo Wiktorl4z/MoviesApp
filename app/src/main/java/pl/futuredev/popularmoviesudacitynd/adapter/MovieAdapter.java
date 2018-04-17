@@ -1,4 +1,4 @@
-package pl.futuredev.popularmoviesudacitynd;
+package pl.futuredev.popularmoviesudacitynd.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +12,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import pl.futuredev.popularmoviesudacitynd.R;
 import pl.futuredev.popularmoviesudacitynd.models.Movie;
 import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 

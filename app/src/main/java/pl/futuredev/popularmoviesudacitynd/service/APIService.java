@@ -1,5 +1,6 @@
-package pl.futuredev.popularmoviesudacitynd.models;
+package pl.futuredev.popularmoviesudacitynd.service;
 
+import pl.futuredev.popularmoviesudacitynd.models.MovieList;
 import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 import retrofit2.Call;
 import retrofit2.http.GET;

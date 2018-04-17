@@ -1,4 +1,4 @@
-package pl.futuredev.popularmoviesudacitynd;
+package pl.futuredev.popularmoviesudacitynd.service;
 
 import android.support.annotation.NonNull;
 
