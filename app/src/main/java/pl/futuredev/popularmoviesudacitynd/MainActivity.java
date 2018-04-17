@@ -127,18 +127,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 popularMoviesListFromService();
                 return true;
             case R.id.favourite:
-                favouriteMoviesFromContentProvider();
+            //    favouriteMoviesFromContentProvider();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void favouriteMoviesFromContentProvider() {
+ /*   private void favouriteMoviesFromContentProvider() {
         movie = response.body().results;
         adapter = new MovieAdapter(movie, MainActivity.this::onClick);
         recyclerView.setAdapter(adapter);
-    }
+    }*/
 
     @Override
     public void onClick(int clickedItemIndex) {

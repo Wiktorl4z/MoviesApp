@@ -42,8 +42,6 @@ public class DetailActivity extends AppCompatActivity {
     TextView tvReleaseDate;
     @BindView(R.id.tv_vote_average)
     TextView tvVoteAverage;
-    @BindView(R.id.favoriteBox)
-    CheckBox favoriteBox;
     @BindView(R.id.tv_plot_synopsis)
     TextView tvPlotSynopsis;
     @BindView(R.id.iv_collapsing)
@@ -89,9 +87,15 @@ public class DetailActivity extends AppCompatActivity {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         if (isFavourite) {
-                            deletingFavouriteState();
+                            int position = deletingFavouriteState();
+                            if (position == 1) {
+                                isFavourite = false;
+                            } else {
+                                isFavourite = true;
+                            }
                         } else {
                             insertingIntoDataBase(movie);
+                            isFavourite = true;
                         }
                         return null;
                     }
@@ -102,41 +106,26 @@ public class DetailActivity extends AppCompatActivity {
                         colorSwicherForFAB();
                     }
                 }.execute();
-                Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (!isFavourite) {
+                    Toast.makeText(DetailActivity.this, R.string.add_to_fav, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(DetailActivity.this, R.string.remove_from_fav, Toast.LENGTH_SHORT).show();
+                }
             }
         });
-
     }
 
-    private void deletingFavouriteState() {
+    private int deletingFavouriteState() {
         ContentResolver resolver = getContentResolver();
         Uri uri = BASE_CONTENT_URI.buildUpon()
                 .appendPath(PATH_MOVIES)
                 .appendPath(movieId + "")
                 .build();
-        resolver.delete(uri, null, null);
+        int deleted = resolver.delete(uri, null, null);
+        return deleted;
     }
 
-    private void readingFromDataBase() {
-
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String[] projection = {
-                MoviesContract.MoviesDateBase._ID
-        };
-
-        Cursor cursor = db.query(
-                MoviesContract.MoviesDateBase.TABLE_NAME,
-                projection,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-    }
-
-    private void insertingIntoDataBase(Movie movie) {
+    private Uri insertingIntoDataBase(Movie movie) {
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(MoviesContract.MoviesDateBase.MOVIE_TITLE, movie.getTitle());
@@ -146,9 +135,9 @@ public class DetailActivity extends AppCompatActivity {
         Uri uri = getContentResolver().insert(MoviesContract.MoviesDateBase.CONTENT_URI, contentValues);
 
         if (uri != null) {
-            Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_SHORT).show();
+            return uri;
         }
-
+        return null;
     }
 
     private void populateUI(Movie movie) {
