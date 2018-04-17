@@ -53,7 +53,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.single_layout, parent, false);
-
+        view.setFocusable(true);
         return new ViewHolder(view);
     }
 
@@ -66,12 +66,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         String imageUrl = UrlManager.IMAGE_BASE_URL;
         String urlId = imageUrl + data.get(listPosition).getPosterPath();
 
-        Context context = holder.imageView.getContext();
-
         progressBar.setVisibility(View.GONE);
-
         Picasso.get().load(urlId).into(imageView);
-
     }
 
     @Override

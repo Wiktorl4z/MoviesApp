@@ -79,7 +79,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                         .show();
             }
         });
-    };
+    }
+
+    ;
 
     private void topRatedMoviesFromService() {
         service.getTopRatedMovies().enqueue(new Callback<MovieList>() {
@@ -106,7 +108,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                         .show();
             }
         });
-    };
+    }
+
+    ;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -127,18 +131,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 popularMoviesListFromService();
                 return true;
             case R.id.favourite:
-            //    favouriteMoviesFromContentProvider();
+                favouriteMoviesFromContentProvider();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
- /*   private void favouriteMoviesFromContentProvider() {
-        movie = response.body().results;
-        adapter = new MovieAdapter(movie, MainActivity.this::onClick);
-        recyclerView.setAdapter(adapter);
-    }*/
+    private void favouriteMoviesFromContentProvider() {
+        Intent intent = new Intent(this, FavouriteActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     public void onClick(int clickedItemIndex) {

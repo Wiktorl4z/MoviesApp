@@ -74,9 +74,7 @@ public class DetailActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         colapingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
-
         FloatingActionButton fab = findViewById(R.id.fab);
-
         movieId = movie.getId();
         new ContentProviderAsyncTask().execute();
 

@@ -55,7 +55,6 @@ public class MoviesProvider extends ContentProvider{
                         null,
                         null,
                         sortOrder);
-
                 break;
                 case CODE_MOVIE_WITH_ID:
                     String id = uri.getPathSegments().get(1);
