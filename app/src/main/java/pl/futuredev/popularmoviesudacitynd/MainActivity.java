@@ -79,9 +79,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                         .show();
             }
         });
-    }
-
-    ;
+    };
 
     private void topRatedMoviesFromService() {
         service.getTopRatedMovies().enqueue(new Callback<MovieList>() {
@@ -108,9 +106,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                         .show();
             }
         });
-    }
-
-    ;
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

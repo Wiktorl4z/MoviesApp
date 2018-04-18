@@ -30,10 +30,12 @@ public class FavouriteActivity extends AppCompatActivity implements LoaderManage
     private int mPosition = RecyclerView.NO_POSITION;
 
     public static final String[] FAVOURITE_MOVIE_TABLE = {
-            MoviesContract.MoviesDateBase.MOVIE_TITLE
+            MoviesContract.MoviesDateBase.MOVIE_TITLE,
+            MoviesContract.MoviesDateBase.MOVIE_POSTER_PATCH
     };
 
     public static final int MOVIE_TITLE = 0;
+    public static final int MOVIE_POSTER_PATCH = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

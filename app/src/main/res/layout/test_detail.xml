@@ -51,12 +51,19 @@
 
     </android.support.v4.widget.NestedScrollView>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp" />
+
     <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/ic_favorite_black_24dp"
         android:id="@+id/fab"
+        style="@style/FabStyle"
         android:layout_margin="16dp"
+        android:src="@drawable/ic_favorite_black_24dp"
         app:layout_anchor="@id/appbar"
-        app:layout_anchorGravity="bottom|right|end"
-        style="@style/FabStyle"/>
+        app:layout_anchorGravity="bottom|right|end" />
 
 </android.support.design.widget.CoordinatorLayout>

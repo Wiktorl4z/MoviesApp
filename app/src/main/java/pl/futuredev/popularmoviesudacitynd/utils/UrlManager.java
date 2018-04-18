@@ -10,5 +10,6 @@ public class UrlManager {
     public static final String BASE_URL = "https://api.themoviedb.org";
     // https://api.themoviedb.org/3/movie/441614/images?api_key=
     public static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w185";
+    public static final String YOUTUBE_URL = "https://img.youtube.com/vi/";
 
 }
