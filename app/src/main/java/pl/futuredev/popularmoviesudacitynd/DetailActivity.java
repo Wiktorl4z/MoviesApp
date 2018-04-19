@@ -14,34 +14,42 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import pl.futuredev.popularmoviesudacitynd.adapter.FavouriteAdapter;
+import pl.futuredev.popularmoviesudacitynd.adapter.ReviewAdapter;
 import pl.futuredev.popularmoviesudacitynd.adapter.TrailerAdapter;
 import pl.futuredev.popularmoviesudacitynd.data.MoviesContract;
 import pl.futuredev.popularmoviesudacitynd.models.Movie;
+import pl.futuredev.popularmoviesudacitynd.models.Review;
+import pl.futuredev.popularmoviesudacitynd.models.ReviewList;
+import pl.futuredev.popularmoviesudacitynd.models.Trailer;
+import pl.futuredev.popularmoviesudacitynd.models.TrailerList;
+import pl.futuredev.popularmoviesudacitynd.service.APIService;
+import pl.futuredev.popularmoviesudacitynd.service.HttpConnector;
 import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static pl.futuredev.popularmoviesudacitynd.data.MoviesContract.BASE_CONTENT_URI;
 import static pl.futuredev.popularmoviesudacitynd.data.MoviesContract.PATH_MOVIES;
 
-public class DetailActivity extends AppCompatActivity  implements TrailerAdapter.TrailerAdapterOnClickHandler {
+public class DetailActivity extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler {
 
-    @BindView(R.id.tv_title)
-    TextView tvTitle;
     @BindView(R.id.tv_release_date)
     TextView tvReleaseDate;
     @BindView(R.id.tv_vote_average)
@@ -58,16 +66,24 @@ public class DetailActivity extends AppCompatActivity  implements TrailerAdapter
     AppBarLayout appbar;
     @BindView(R.id.fab)
     FloatingActionButton fab;
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
+    @BindView(R.id.recyclerViewForTrailers)
+    RecyclerView recyclerViewForTrailers;
+    @BindView(R.id.recyclerViewForReviews)
+    RecyclerView recyclerViewForReviews;
+    @BindView(R.id.tv_imageView)
+    ImageView tvImageView;
+    @BindView(R.id.tv_popularity)
+    TextView tvPopularity;
 
     private SQLiteOpenHelper mDbHelper;
     private Cursor mData;
     private TrailerAdapter trailerAdapter;
-    private List<Movie> data;
+    private ReviewAdapter reviewAdapter;
+    private List<TrailerList> trailerList;
+    private List<ReviewList> reviewList;
     private int movieId;
     private static boolean isFavourite;
-
+    private APIService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,21 +95,25 @@ public class DetailActivity extends AppCompatActivity  implements TrailerAdapter
 
         Intent intent = getIntent();
         Movie movie = intent.getParcelableExtra("movie");
+        movieId = movie.getId();
         populateUI(movie);
+
+        service = HttpConnector.getService(APIService.class);
+        gettingObjectsForTrailer();
+        gettingObjectsForReview();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         colapingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
-        movieId = movie.getId();
 
-        LinearLayoutManager layoutManager =
+        LinearLayoutManager trailerLayoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-        trailerAdapter = new TrailerAdapter(movie,DetailActivity.this::onClick);
-        recyclerView.setAdapter(trailerAdapter);
+        recyclerViewForTrailers.setLayoutManager(trailerLayoutManager);
+        recyclerViewForTrailers.setHasFixedSize(true);
+
+        recyclerViewForReviews.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerViewForReviews.setHasFixedSize(true);
 
         new ContentProviderAsyncTask().execute();
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,6 +146,74 @@ public class DetailActivity extends AppCompatActivity  implements TrailerAdapter
         });
     }
 
+    private void gettingObjectsForTrailer() {
+        service.getTrailer("" + movieId).enqueue(new Callback<Trailer>() {
+            @Override
+            public void onResponse(Call<Trailer> call, Response<Trailer> response) {
+                responseForTrailer(response);
+            }
+
+            @Override
+            public void onFailure(Call<Trailer> call, Throwable t) {
+                Toast.makeText(DetailActivity.this, t.getMessage(), Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
+    }
+
+    ;
+
+    private void responseForTrailer(Response<Trailer> response) {
+        if (response.isSuccessful()) {
+            trailerList = response.body().results;
+            trailerAdapter = new TrailerAdapter(trailerList, DetailActivity.this::onClick);
+            recyclerViewForTrailers.setAdapter(trailerAdapter);
+        } else {
+            try {
+                Toast.makeText(DetailActivity.this, response.errorBody().string(), Toast.LENGTH_SHORT)
+                        .show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    ;
+
+    private void gettingObjectsForReview() {
+        service.getReview("" + movieId).enqueue(new Callback<Review>() {
+            @Override
+            public void onResponse(Call<Review> call, Response<Review> response) {
+                responseForReview(response);
+            }
+
+            @Override
+            public void onFailure(Call<Review> call, Throwable t) {
+                Toast.makeText(DetailActivity.this, t.getMessage(), Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
+    }
+
+    ;
+
+    private void responseForReview(Response<Review> response) {
+        if (response.isSuccessful()) {
+            reviewList = response.body().results;
+            reviewAdapter = new ReviewAdapter(reviewList, DetailActivity.this::onClick);
+            recyclerViewForReviews.setAdapter(reviewAdapter);
+        } else {
+            try {
+                Toast.makeText(DetailActivity.this, response.errorBody().string(), Toast.LENGTH_SHORT)
+                        .show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    ;
+
     private int deletingFavouriteState() {
         ContentResolver resolver = getContentResolver();
         Uri uri = getUri();
@@ -157,15 +245,12 @@ public class DetailActivity extends AppCompatActivity  implements TrailerAdapter
     private void populateUI(Movie movie) {
         String imageUrl = UrlManager.IMAGE_BASE_URL;
         colapingToolbarLayout.setTitle(movie.getTitle());
-        tvReleaseDate.setText(getString(R.string.release_date) + movie.getReleaseDate());
+        tvReleaseDate.setText(movie.getReleaseDate());
         Picasso.get().load(imageUrl + movie.getBackdropPath()).into(ivCollapsing);
-        tvPlotSynopsis.setText(getString(R.string.plot_synopsis) + movie.getOverview());
-        tvVoteAverage.setText(getString(R.string.vote_average) + movie.getVoteAverage());
-    }
-
-    @Override
-    public void onClick(int clickedItemIndex) {
-
+        tvPlotSynopsis.setText(movie.getOverview());
+        tvVoteAverage.setText("" + movie.getVoteAverage() + "/10");
+        tvPopularity.setText(movie.getPopularity() + " votes");
+        Picasso.get().load(imageUrl + movie.getPosterPath()).into(tvImageView);
     }
 
     private class ContentProviderAsyncTask extends AsyncTask<Void, Void, Cursor> {
@@ -204,4 +289,11 @@ public class DetailActivity extends AppCompatActivity  implements TrailerAdapter
     protected void onPostResume() {
         super.onPostResume();
     }
+
+    @Override
+    public void onClick(int clickedItemIndex) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(UrlManager.YOUTUBE_URL + trailerList.get(clickedItemIndex).getKey()));
+        startActivity(intent);
+    }
 }
+

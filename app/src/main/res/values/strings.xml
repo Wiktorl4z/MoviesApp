@@ -20,5 +20,7 @@
     <string name="title_activity_favourite">FavouriteActivity</string>
     <string name="add_to_fav">Your movie has been add to favourites</string>
     <string name="remove_from_fav">Your movie has been deleted from favourites</string>
+    <string name="videos">Videos</string>
+    <string name="reviews">Reviews</string>
 
 </resources>

@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private MovieList movieList;
     private List<Movie> movie;
     private static final String CLASS_TAG = "TestActivity";
-    static List<MovieList> items;
     private Toast toast;
 
     @BindView(R.id.my_recycler_view)
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         ButterKnife.bind(this);
 
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         service = HttpConnector.getService(APIService.class);
@@ -58,19 +57,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         service.getPopularMoviesList().enqueue(new Callback<MovieList>() {
             @Override
             public void onResponse(Call<MovieList> call, Response<MovieList> response) {
-
-                if (response.isSuccessful()) {
-                    movie = response.body().results;
-                    adapter = new MovieAdapter(movie, MainActivity.this::onClick);
-                    recyclerView.setAdapter(adapter);
-                } else {
-                    try {
-                        Toast.makeText(MainActivity.this, response.errorBody().string(), Toast.LENGTH_SHORT)
-                                .show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                settingUpRecyclerView(response);
             }
 
             @Override
@@ -85,19 +72,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         service.getTopRatedMovies().enqueue(new Callback<MovieList>() {
             @Override
             public void onResponse(Call<MovieList> call, Response<MovieList> response) {
-
-                if (response.isSuccessful()) {
-                    movie = response.body().results;
-                    adapter = new MovieAdapter(movie, MainActivity.this::onClick);
-                    recyclerView.setAdapter(adapter);
-                } else {
-                    try {
-                        Toast.makeText(MainActivity.this, response.errorBody().string(), Toast.LENGTH_SHORT)
-                                .show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                settingUpRecyclerView(response);
             }
 
             @Override
@@ -106,7 +81,24 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                         .show();
             }
         });
-    };
+    }
+
+    private void settingUpRecyclerView(Response<MovieList> response) {
+        if (response.isSuccessful()) {
+            movie = response.body().results;
+            adapter = new MovieAdapter(movie, MainActivity.this::onClick);
+            recyclerView.setAdapter(adapter);
+        } else {
+            try {
+                Toast.makeText(MainActivity.this, response.errorBody().string(), Toast.LENGTH_SHORT)
+                        .show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    ;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
