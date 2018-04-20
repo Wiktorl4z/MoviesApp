@@ -6,4 +6,6 @@
     <color name="colorBlack">#050002</color>
     <color name="colorYes">#ff1a75</color>
     <color name="colorNo">#d1d1e0</color>
+    <color name="white">#ffffff</color>
+    <color name="almostWhite">#e6f2ff</color>
 </resources>

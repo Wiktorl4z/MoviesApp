@@ -48,7 +48,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.review_layout, parent, false);
+                .inflate(R.layout.content_review, parent, false);
         view.setFocusable(true);
         return new ViewHolder(view);
     }

@@ -5,14 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import butterknife.BindView;
 import pl.futuredev.popularmoviesudacitynd.R;
 import pl.futuredev.popularmoviesudacitynd.models.TrailerList;
 import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
@@ -51,7 +48,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.trailer_layout, parent, false);
+                .inflate(R.layout.content_trailer, parent, false);
         view.setFocusable(true);
         return new ViewHolder(view);
     }

@@ -4,6 +4,7 @@ import pl.futuredev.popularmoviesudacitynd.BuildConfig;
 
 public class UrlManager {
 
+    //Please add your proper API key to project:gradle.properties file API_KEY=""
     public static final String API_KEY = BuildConfig.API_KEY;
     // https://api.themoviedb.org/3/movie/popular?api_key
     public static final String POPULAR = "3/movie/popular?api_key=" + API_KEY;

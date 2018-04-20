@@ -21,6 +21,9 @@ public class MoviesContract {
         public static final String MOVIE_TITLE = "movieTitle";
         public static final String MOVIE_ID = "movieId";
         public static final String MOVIE_POSTER_PATCH = "posterPath";
+        public static final String RELEASE_DATE = "releaseDate";
+        public static final String VOTE_AVERAGE = "voteAverage";
+        public static final String VOTE_COUNT = "voteCount";
     }
 
 }

@@ -59,10 +59,10 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     TextView tvPlotSynopsis;
     @BindView(R.id.iv_collapsing)
     ImageView ivCollapsing;
-    @BindView(R.id.colapingToolbarLayout)
-    CollapsingToolbarLayout colapingToolbarLayout;
-    @BindView(R.id.toolbarid)
-    Toolbar toolbarid;
+    @BindView(R.id.collapsingToolbarLayout)
+    CollapsingToolbarLayout collapsingToolbarLayout;
+    @BindView(R.id.toolbarId)
+    Toolbar toolbarId;
     @BindView(R.id.appbar)
     AppBarLayout appbar;
     @BindView(R.id.fab)
@@ -92,7 +92,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.test_detail);
+        setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
 
         supportPostponeEnterTransition();
@@ -108,8 +108,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         gettingObjectsForTrailer();
         gettingObjectsForReview();
 
-        setSupportActionBar(toolbarid);
-        colapingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+        setSupportActionBar(toolbarId);
+        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
 
         LinearLayoutManager trailerLayoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -140,7 +140,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                     @Override
                     protected void onPostExecute(Void aVoid) {
                         super.onPostExecute(aVoid);
-                        colorSwicherForFAB();
+                        colorSwitcherForFAB();
                         toastMessageIfFavourite();
                     }
                 }.execute();
@@ -243,6 +243,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         contentValues.put(MoviesContract.MoviesDateBase.MOVIE_TITLE, movie.getTitle());
         contentValues.put(MoviesContract.MoviesDateBase.MOVIE_ID, movie.getId());
         contentValues.put(MoviesContract.MoviesDateBase.MOVIE_POSTER_PATCH, movie.getPosterPath());
+        contentValues.put(MoviesContract.MoviesDateBase.RELEASE_DATE, movie.getReleaseDate());
+        contentValues.put(MoviesContract.MoviesDateBase.VOTE_AVERAGE, movie.getVoteAverage());
+        contentValues.put(MoviesContract.MoviesDateBase.VOTE_COUNT, movie.getVoteCount());
 
         Uri uri = getContentResolver().insert(MoviesContract.MoviesDateBase.CONTENT_URI, contentValues);
 
@@ -257,7 +260,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         int i = Integer.valueOf(L.intValue());
         int voteScore = i / 2;
         ratingBar.setRating(voteScore);
-
     }
 
     private void populateUI(Movie movie) {
@@ -265,12 +267,12 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         String year = release.substring(0, Math.min(release.length(), 4));
 
         String imageUrl = UrlManager.IMAGE_BASE_URL;
-        colapingToolbarLayout.setTitle(movie.getTitle());
+        collapsingToolbarLayout.setTitle(movie.getTitle());
         tvReleaseDate.setText(year);
         Picasso.get().load(imageUrl + movie.getBackdropPath()).into(ivCollapsing);
         tvPlotSynopsis.setText(movie.getOverview());
-        tvVoteAverage.setText("" + movie.getVoteAverage() + "/10");
-        tvVoteCount.setText(movie.getVoteCount() + " votes");
+        tvVoteAverage.setText("" + movie.getVoteAverage() + getString(R.string.scores));
+        tvVoteCount.setText(movie.getVoteCount() + getString(R.string.votes));
         Picasso.get().load(imageUrl + movie.getPosterPath()).into(tvImageView);
     }
 
@@ -292,11 +294,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
             } else {
                 isFavourite = false;
             }
-            colorSwicherForFAB();
+            colorSwitcherForFAB();
         }
     }
 
-    private void colorSwicherForFAB() {
+    private void colorSwitcherForFAB() {
         if (isFavourite) {
             fab.setBackgroundTintList(ColorStateList.valueOf(Color
                     .parseColor("#ff0000")));

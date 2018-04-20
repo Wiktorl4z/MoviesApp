@@ -1,6 +1,5 @@
 package pl.futuredev.popularmoviesudacitynd.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,7 +51,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.single_layout, parent, false);
+                .inflate(R.layout.content_movie, parent, false);
         view.setFocusable(true);
         return new ViewHolder(view);
     }

@@ -22,15 +22,6 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="NoActionBar" parent="@android:style/Theme.Holo.Light">
-        <item name="windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
     <style name="RatingBar" parent="Theme.AppCompat">
         <item name="colorControlNormal">@color/colorNo</item>
         <item name="colorControlActivated">@color/colorYes</item>

@@ -8,15 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
-import pl.futuredev.popularmoviesudacitynd.FavouriteActivity;
+import pl.futuredev.popularmoviesudacitynd.MainActivity;
 import pl.futuredev.popularmoviesudacitynd.R;
-import pl.futuredev.popularmoviesudacitynd.models.Movie;
 import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 
 public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.ViewHolder> {
@@ -35,13 +33,21 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView imageView;
-        TextView textView;
+        TextView tvReleaseDate;
+        ImageView tv_imageView;
+        TextView titleText;
+        RatingBar ratingBar;
+        TextView tvVoteAverage;
+        TextView tvVoteCount;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.imageView = itemView.findViewById(R.id.imageView);
-            this.textView = itemView.findViewById(R.id.textView);
+            this.titleText = itemView.findViewById(R.id.tv_title_text);
+            this.tv_imageView = itemView.findViewById(R.id.tv_imageView);
+            this.tvReleaseDate = itemView.findViewById(R.id.tv_release_date);
+            this.ratingBar = itemView.findViewById(R.id.rating_bar);
+            this.tvVoteAverage = itemView.findViewById(R.id.tv_vote_average);
+            this.tvVoteCount = itemView.findViewById(R.id.tv_vote_count);
         }
     }
 
@@ -55,18 +61,39 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FavouriteAdapter.ViewHolder holder, int position) {
-        TextView titleTextView = holder.textView;
-        ImageView imageView = holder.imageView;
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        TextView titleTextView = holder.titleText;
+        ImageView imageView = holder.tv_imageView;
+        TextView tvReleaseDate = holder.tvReleaseDate;
+        RatingBar ratingBar = holder.ratingBar;
+        TextView tvVoteAverage = holder.tvVoteAverage;
+        TextView tvVoteCount = holder.tvVoteCount;
+
         mCursor.moveToPosition(position);
-        String title = mCursor.getString(FavouriteActivity.MOVIE_TITLE);
+        String title = mCursor.getString(MainActivity.MOVIE_TITLE);
         titleTextView.setText(title);
 
-        String imageUrl = UrlManager.IMAGE_BASE_URL;
-        String urlId = imageUrl + mCursor.getString(FavouriteActivity.MOVIE_POSTER_PATCH);
+        String votes = mCursor.getString(MainActivity.VOTE_AVERAGE);
 
+        String release= mCursor.getString(MainActivity.RELEASE_DATE);
+        String year = release.substring(0, Math.min(release.length(), 4));
+        tvReleaseDate.setText(year);
+
+        ratingBar.setRating(settingRatingBar(votes));
+        tvVoteAverage.setText(mCursor.getString(MainActivity.VOTE_AVERAGE)+ mContext.getString(R.string.scores));
+        tvVoteCount.setText(mCursor.getString(MainActivity.VOTE_COUNT)+ mContext.getString(R.string.votes));
+
+        String imageUrl = UrlManager.IMAGE_BASE_URL;
+        String urlId = imageUrl + mCursor.getString(MainActivity.MOVIE_POSTER_PATCH);
         Picasso.get().load(urlId).into(imageView);
 
+    }
+
+    private int settingRatingBar(String votes) {
+        int L = Math.round(Float.parseFloat(votes));
+        int i = Integer.valueOf(L);
+        int voteScore = i / 2;
+        return voteScore;
     }
 
     @Override
