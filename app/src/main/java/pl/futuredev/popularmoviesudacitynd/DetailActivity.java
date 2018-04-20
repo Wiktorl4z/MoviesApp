@@ -20,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,8 +73,10 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     RecyclerView recyclerViewForReviews;
     @BindView(R.id.tv_imageView)
     ImageView tvImageView;
-    @BindView(R.id.tv_popularity)
-    TextView tvPopularity;
+    @BindView(R.id.rating_bar)
+    RatingBar ratingBar;
+    @BindView(R.id.tv_vote_count)
+    TextView tvVoteCount;
 
     private SQLiteOpenHelper mDbHelper;
     private Cursor mData;
@@ -88,6 +91,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.test_detail);
         ButterKnife.bind(this);
 
@@ -96,13 +100,15 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         Intent intent = getIntent();
         Movie movie = intent.getParcelableExtra("movie");
         movieId = movie.getId();
+        double votes = movie.getVoteAverage();
         populateUI(movie);
+        settingRatingBar(votes);
 
         service = HttpConnector.getService(APIService.class);
         gettingObjectsForTrailer();
         gettingObjectsForReview();
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setSupportActionBar(toolbarid);
         colapingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
 
         LinearLayoutManager trailerLayoutManager =
@@ -135,15 +141,19 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                     protected void onPostExecute(Void aVoid) {
                         super.onPostExecute(aVoid);
                         colorSwicherForFAB();
-                        if (!isFavourite) {
-                            Toast.makeText(DetailActivity.this, R.string.add_to_fav, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(DetailActivity.this, R.string.remove_from_fav, Toast.LENGTH_SHORT).show();
-                        }
+                        toastMessageIfFavourite();
                     }
                 }.execute();
             }
         });
+    }
+
+    private void toastMessageIfFavourite() {
+        if (isFavourite) {
+            Toast.makeText(DetailActivity.this, R.string.add_to_fav, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(DetailActivity.this, R.string.remove_from_fav, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void gettingObjectsForTrailer() {
@@ -242,14 +252,25 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         return null;
     }
 
+    private void settingRatingBar(double votes) {
+        Long L = Math.round(votes);
+        int i = Integer.valueOf(L.intValue());
+        int voteScore = i / 2;
+        ratingBar.setRating(voteScore);
+
+    }
+
     private void populateUI(Movie movie) {
+        String release = movie.getReleaseDate();
+        String year = release.substring(0, Math.min(release.length(), 4));
+
         String imageUrl = UrlManager.IMAGE_BASE_URL;
         colapingToolbarLayout.setTitle(movie.getTitle());
-        tvReleaseDate.setText(movie.getReleaseDate());
+        tvReleaseDate.setText(year);
         Picasso.get().load(imageUrl + movie.getBackdropPath()).into(ivCollapsing);
         tvPlotSynopsis.setText(movie.getOverview());
         tvVoteAverage.setText("" + movie.getVoteAverage() + "/10");
-        tvPopularity.setText(movie.getPopularity() + " votes");
+        tvVoteCount.setText(movie.getVoteCount() + " votes");
         Picasso.get().load(imageUrl + movie.getPosterPath()).into(tvImageView);
     }
 
