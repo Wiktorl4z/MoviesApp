@@ -12,7 +12,7 @@ import android.support.annotation.Nullable;
 
 import static pl.futuredev.popularmoviesudacitynd.data.MoviesContract.MoviesDateBase.TABLE_NAME;
 
-public class MoviesProvider extends ContentProvider{
+public class MoviesProvider extends ContentProvider {
 
     public static final int CODE_MOVIE = 100;
     public static final int CODE_MOVIE_WITH_ID = 101;
@@ -56,25 +56,25 @@ public class MoviesProvider extends ContentProvider{
                         null,
                         sortOrder);
                 break;
-                case CODE_MOVIE_WITH_ID:
-                    String id = uri.getPathSegments().get(1);
-                    String mSelection = MoviesContract.MoviesDateBase.MOVIE_ID+"=?";
-                    String[] mSelectionArgs = new String[]{id};
+            case CODE_MOVIE_WITH_ID:
+                String id = uri.getPathSegments().get(1);
+                String mSelection = MoviesContract.MoviesDateBase.MOVIE_ID + "=?";
+                String[] mSelectionArgs = new String[]{id};
 
-                    cursor = db.query(TABLE_NAME,
-                            projection,
-                            mSelection,
-                            mSelectionArgs,
-                            null,
-                            null,
-                            sortOrder);
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Unknown uri: " + uri);
-            }
-            cursor.setNotificationUri(getContext().getContentResolver(), uri);
-            return cursor;
+                cursor = db.query(TABLE_NAME,
+                        projection,
+                        mSelection,
+                        mSelectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
+    }
 
     @Nullable
     @Override
@@ -102,7 +102,7 @@ public class MoviesProvider extends ContentProvider{
         switch (match) {
             case CODE_MOVIE:
                 long id = db.insert(TABLE_NAME, null, values);
-                if ( id > 0 ) {
+                if (id > 0) {
                     returnUri = ContentUris.withAppendedId(MoviesContract.MoviesDateBase.CONTENT_URI, id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
@@ -124,7 +124,7 @@ public class MoviesProvider extends ContentProvider{
         switch (match) {
             case CODE_MOVIE_WITH_ID:
                 String id = uri.getPathSegments().get(1);
-                String mSelection = MoviesContract.MoviesDateBase.MOVIE_ID+"=?";
+                String mSelection = MoviesContract.MoviesDateBase.MOVIE_ID + "=?";
                 String[] mSelectionArgs = new String[]{id};
                 movieDeleted = db.delete(TABLE_NAME, mSelection, mSelectionArgs);
                 break;
@@ -141,5 +141,4 @@ public class MoviesProvider extends ContentProvider{
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         return 0;
     }
-
 }

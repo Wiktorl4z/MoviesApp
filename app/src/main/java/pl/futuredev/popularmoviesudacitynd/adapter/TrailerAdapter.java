@@ -57,7 +57,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
     public void onBindViewHolder(final ViewHolder holder, final int listPosition) {
 
         ImageView imageView = holder.ivTrailerImage;
-        //    String urlId = UrlManager.YOUTUBE_URL + trailerList.get(listPosition).getKey();
         String imageYouTubeUrl = UrlManager.THUMBNAIL + trailerList.get(listPosition).getKey() + "/0.jpg";
         Picasso.get().load(imageYouTubeUrl).into(imageView);
     }

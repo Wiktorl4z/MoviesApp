@@ -169,9 +169,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                         .show();
             }
         });
-    }
-
-    ;
+    };
 
     private void responseForTrailer(Response<Trailer> response) {
         if (response.isSuccessful()) {
@@ -186,9 +184,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                 e.printStackTrace();
             }
         }
-    }
-
-    ;
+    };
 
     private void gettingObjectsForReview() {
         service.getReview("" + movieId).enqueue(new Callback<Review>() {
@@ -203,9 +199,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                         .show();
             }
         });
-    }
-
-    ;
+    };
 
     private void responseForReview(Response<Review> response) {
         if (response.isSuccessful()) {
@@ -220,9 +214,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                 e.printStackTrace();
             }
         }
-    }
-
-    ;
+    };
 
     private int deletingFavouriteState() {
         ContentResolver resolver = getContentResolver();

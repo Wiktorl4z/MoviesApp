@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -43,6 +44,24 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     ProgressBar loadingIndicator;
     @BindView(R.id.my_recycler_view)
     RecyclerView recyclerView;
+    private int mPosition = RecyclerView.NO_POSITION;
+    private static final int ID_DETAIL_LOADER = 300;
+    public static final int MOVIE_TITLE = 0;
+    public static final int MOVIE_POSTER_PATCH = 1;
+    public static final int RELEASE_DATE = 2;
+    public static final int VOTE_AVERAGE = 3;
+    public static final int VOTE_COUNT = 4;
+    private static final String STATE_KEY = "state";
+    private static final String FOV_MOVIES = "favourite";
+    private static final String POPULAR_MOVIES = "popular";
+    private static final String BUNDLE_RECYCLER_LAYOUT = "recycler_layout";
+    public static final String[] FAVOURITE_MOVIE_TABLE = {
+            MoviesContract.MoviesDateBase.MOVIE_TITLE,
+            MoviesContract.MoviesDateBase.MOVIE_POSTER_PATCH,
+            MoviesContract.MoviesDateBase.RELEASE_DATE,
+            MoviesContract.MoviesDateBase.VOTE_AVERAGE,
+            MoviesContract.MoviesDateBase.VOTE_COUNT
+    };
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private APIService service;
@@ -51,20 +70,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private static final String CLASS_TAG = "TestActivity";
     private Toast toast;
     private FavouriteAdapter favouriteAdapter;
-    private int mPosition = RecyclerView.NO_POSITION;
-    private static final int ID_DETAIL_LOADER = 300;
-    public static final String[] FAVOURITE_MOVIE_TABLE = {
-            MoviesContract.MoviesDateBase.MOVIE_TITLE,
-            MoviesContract.MoviesDateBase.MOVIE_POSTER_PATCH,
-            MoviesContract.MoviesDateBase.RELEASE_DATE,
-            MoviesContract.MoviesDateBase.VOTE_AVERAGE,
-            MoviesContract.MoviesDateBase.VOTE_COUNT
-    };
-    public static final int MOVIE_TITLE = 0;
-    public static final int MOVIE_POSTER_PATCH = 1;
-    public static final int RELEASE_DATE = 2;
-    public static final int VOTE_AVERAGE = 3;
-    public static final int VOTE_COUNT = 4;
+    private String state;
+    private GridLayoutManager mGridLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +82,32 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         if (UrlManager.API_KEY.isEmpty()) {
             Toast.makeText(getApplicationContext(), R.string.api_key_message, Toast.LENGTH_LONG).show();
         }
-
         service = HttpConnector.getService(APIService.class);
-        popularMoviesListFromService();
+        mGridLayoutManager = new GridLayoutManager(this, 2);
+
+        if (savedInstanceState != null) {
+            state = savedInstanceState.getString(STATE_KEY);
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+            mGridLayoutManager.onRestoreInstanceState(savedRecyclerLayoutState);
+            switch (state) {
+                case FOV_MOVIES:
+                    favouriteMovies();
+                    break;
+                case POPULAR_MOVIES:
+                    popularMoviesListFromService();
+                    break;
+                default:
+                    topRatedMoviesFromService();
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_KEY, state);
+        outState.putParcelable(BUNDLE_RECYCLER_LAYOUT,
+                mGridLayoutManager.onSaveInstanceState());
     }
 
     private void popularMoviesListFromService() {
@@ -93,9 +123,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                         .show();
             }
         });
-    }
-
-    ;
+    };
 
     private void topRatedMoviesFromService() {
         service.getTopRatedMovies().enqueue(new Callback<MovieList>() {
@@ -117,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             movie = response.body().results;
             adapter = new MovieAdapter(movie, MainActivity.this::onClick);
             recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+            recyclerView.setLayoutManager(mGridLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setAdapter(adapter);
         } else {
@@ -128,9 +156,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 e.printStackTrace();
             }
         }
-    }
-
-    ;
+    };
 
     private void favouriteMovies() {
         LinearLayoutManager layoutManager =
@@ -141,9 +167,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         recyclerView.setAdapter(favouriteAdapter);
         showLoading();
         getSupportLoaderManager().initLoader(ID_DETAIL_LOADER, null, this);
-    }
-
-    ;
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -159,12 +183,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         switch (id) {
             case R.id.top_rated:
                 topRatedMoviesFromService();
+                state = "top_rated";
                 return true;
             case R.id.popular:
                 popularMoviesListFromService();
+                state = "popular";
                 return true;
             case R.id.favourite:
                 favouriteMovies();
+                state = "favourite";
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -212,12 +239,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         favouriteAdapter.swapCursor(null);
     }
 
-
     @Override
     public void onClick(int clickedItemIndex) {
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra("movie", movie.get(clickedItemIndex));
         startActivity(intent);
     }
-
 }

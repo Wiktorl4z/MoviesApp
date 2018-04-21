@@ -8,4 +8,6 @@
     <color name="colorNo">#d1d1e0</color>
     <color name="white">#ffffff</color>
     <color name="almostWhite">#e6f2ff</color>
+    <color name="prettySureWhite">#e6e6ff</color>
+    <color name="blueNotThatBlueAtAll">#b3d9ff</color>
 </resources>
