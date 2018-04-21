@@ -10,4 +10,9 @@
         android:icon="@drawable/ic_launcher_background"
         android:title="@string/top_rated" />
 
+    <item
+        android:id="@+id/favourite"
+        android:icon="@drawable/ic_launcher_background"
+        android:title="@string/favorite" />
+
 </menu>

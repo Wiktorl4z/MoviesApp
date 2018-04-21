@@ -1,6 +1,5 @@
-package pl.futuredev.popularmoviesudacitynd;
+package pl.futuredev.popularmoviesudacitynd.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import pl.futuredev.popularmoviesudacitynd.R;
 import pl.futuredev.popularmoviesudacitynd.models.Movie;
 import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 
@@ -51,8 +51,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.single_layout, parent, false);
-
+                .inflate(R.layout.content_movie, parent, false);
+        view.setFocusable(true);
         return new ViewHolder(view);
     }
 
@@ -65,12 +65,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         String imageUrl = UrlManager.IMAGE_BASE_URL;
         String urlId = imageUrl + data.get(listPosition).getPosterPath();
 
-        Context context = holder.imageView.getContext();
-
         progressBar.setVisibility(View.GONE);
-
         Picasso.get().load(urlId).into(imageView);
-
     }
 
     @Override
