@@ -54,7 +54,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private static final String STATE_KEY = "state";
     private static final String FOV_MOVIES = "favourite";
     private static final String POPULAR_MOVIES = "popular";
-    private static final String BUNDLE_RECYCLER_LAYOUT = "recycler_layout";
+    private static final String GRID_RECYCLER_LAYOUT = "grid_layout";
+    private static final String LINEAR_RECYCLER_LAYOUT = "linear_layout";
     public static final String[] FAVOURITE_MOVIE_TABLE = {
             MoviesContract.MoviesDateBase.MOVIE_TITLE,
             MoviesContract.MoviesDateBase.MOVIE_POSTER_PATCH,
@@ -70,8 +71,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private static final String CLASS_TAG = "TestActivity";
     private Toast toast;
     private FavouriteAdapter favouriteAdapter;
-    private String state;
-    private GridLayoutManager mGridLayoutManager;
+    private String state = "popular";
+    private GridLayoutManager gridLayoutManager;
+    private LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,12 +85,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             Toast.makeText(getApplicationContext(), R.string.api_key_message, Toast.LENGTH_LONG).show();
         }
         service = HttpConnector.getService(APIService.class);
-        mGridLayoutManager = new GridLayoutManager(this, 2);
+        gridLayoutManager = new GridLayoutManager(this, 2);
+        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
         if (savedInstanceState != null) {
             state = savedInstanceState.getString(STATE_KEY);
-            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
-            mGridLayoutManager.onRestoreInstanceState(savedRecyclerLayoutState);
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(GRID_RECYCLER_LAYOUT);
+            Parcelable linearRecyclerLayoutState = savedInstanceState.getParcelable(LINEAR_RECYCLER_LAYOUT);
+            if (linearRecyclerLayoutState != null) {
+                linearLayoutManager.onRestoreInstanceState(linearRecyclerLayoutState);
+            }
+            if (savedRecyclerLayoutState != null) {
+                gridLayoutManager.onRestoreInstanceState(savedRecyclerLayoutState);
+            }
             switch (state) {
                 case FOV_MOVIES:
                     favouriteMovies();
@@ -99,6 +108,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 default:
                     topRatedMoviesFromService();
             }
+        } else {
+            popularMoviesListFromService();
         }
     }
 
@@ -106,8 +117,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_KEY, state);
-        outState.putParcelable(BUNDLE_RECYCLER_LAYOUT,
-                mGridLayoutManager.onSaveInstanceState());
+        outState.putParcelable(GRID_RECYCLER_LAYOUT,
+                gridLayoutManager.onSaveInstanceState());
+        outState.putParcelable(LINEAR_RECYCLER_LAYOUT,
+                linearLayoutManager.onSaveInstanceState());
     }
 
     private void popularMoviesListFromService() {
@@ -145,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             movie = response.body().results;
             adapter = new MovieAdapter(movie, MainActivity.this::onClick);
             recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(mGridLayoutManager);
+            recyclerView.setLayoutManager(gridLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setAdapter(adapter);
         } else {
@@ -159,9 +172,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     };
 
     private void favouriteMovies() {
-        LinearLayoutManager layoutManager =
-                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
         favouriteAdapter = new FavouriteAdapter(this);
         recyclerView.setAdapter(favouriteAdapter);
@@ -219,8 +230,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         favouriteAdapter.swapCursor(data);
-        if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
-        recyclerView.smoothScrollToPosition(mPosition);
+        recyclerView.setLayoutManager(linearLayoutManager);
         if (data.getCount() != 0) showFavouriteMovies();
     }
 
