@@ -308,7 +308,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     @Override
     public void onClick(int clickedItemIndex) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(UrlManager.YOUTUBE_URL + trailerList.get(clickedItemIndex).getKey()));
-        startActivity(intent);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 }
 
