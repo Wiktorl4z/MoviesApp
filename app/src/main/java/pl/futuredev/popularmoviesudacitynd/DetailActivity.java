@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -41,6 +42,7 @@ import pl.futuredev.popularmoviesudacitynd.models.Trailer;
 import pl.futuredev.popularmoviesudacitynd.models.TrailerList;
 import pl.futuredev.popularmoviesudacitynd.service.APIService;
 import pl.futuredev.popularmoviesudacitynd.service.HttpConnector;
+import pl.futuredev.popularmoviesudacitynd.service.InternetReceiver;
 import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -78,6 +80,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     @BindView(R.id.tv_vote_count)
     TextView tvVoteCount;
 
+    private static final String GRID_RECYCLER_LAYOUT = "grid_layout";
+    private static final String LINEAR_RECYCLER_LAYOUT = "linear_layout";
     private SQLiteOpenHelper mDbHelper;
     private Cursor mData;
     private TrailerAdapter trailerAdapter;
@@ -85,8 +89,12 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     private List<TrailerList> trailerList;
     private List<ReviewList> reviewList;
     private int movieId;
+    private String state;
     private static boolean isFavourite;
     private APIService service;
+    private GridLayoutManager gridLayoutManager;
+    private LinearLayoutManager linearLayoutManager;
+    private InternetReceiver internetReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,26 +105,39 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
 
         supportPostponeEnterTransition();
 
+        internetReceiver = new InternetReceiver();
+        service = HttpConnector.getService(APIService.class);
+
         Intent intent = getIntent();
         Movie movie = intent.getParcelableExtra("movie");
         movieId = movie.getId();
         double votes = movie.getVoteAverage();
-        populateUI(movie);
-        settingRatingBar(votes);
-
-        service = HttpConnector.getService(APIService.class);
         gettingObjectsForTrailer();
         gettingObjectsForReview();
+        gridLayoutManager = new GridLayoutManager(this, 2);
+        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
+        if (savedInstanceState != null) {
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(GRID_RECYCLER_LAYOUT);
+            Parcelable linearRecyclerLayoutState = savedInstanceState.getParcelable(LINEAR_RECYCLER_LAYOUT);
+            if (linearRecyclerLayoutState != null) {
+                linearLayoutManager.onRestoreInstanceState(linearRecyclerLayoutState);
+            }
+            if (savedRecyclerLayoutState != null) {
+                gridLayoutManager.onRestoreInstanceState(savedRecyclerLayoutState);
+            }
+        }
+
+        populateUI(movie);
+        settingRatingBar(votes);
 
         setSupportActionBar(toolbarId);
         collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
 
-        LinearLayoutManager trailerLayoutManager =
-                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerViewForTrailers.setLayoutManager(trailerLayoutManager);
+        recyclerViewForTrailers.setLayoutManager(linearLayoutManager);
         recyclerViewForTrailers.setHasFixedSize(true);
 
-        recyclerViewForReviews.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerViewForReviews.setLayoutManager(gridLayoutManager);
         recyclerViewForReviews.setHasFixedSize(true);
 
         new ContentProviderAsyncTask().execute();
@@ -148,6 +169,15 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         });
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(GRID_RECYCLER_LAYOUT,
+                gridLayoutManager.onSaveInstanceState());
+        outState.putParcelable(LINEAR_RECYCLER_LAYOUT,
+                linearLayoutManager.onSaveInstanceState());
+    }
+
     private void toastMessageIfFavourite() {
         if (isFavourite) {
             Toast.makeText(DetailActivity.this, R.string.add_to_fav, Toast.LENGTH_SHORT).show();
@@ -169,7 +199,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                         .show();
             }
         });
-    };
+    }
+
+    ;
 
     private void responseForTrailer(Response<Trailer> response) {
         if (response.isSuccessful()) {
@@ -184,7 +216,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                 e.printStackTrace();
             }
         }
-    };
+    }
+
+    ;
 
     private void gettingObjectsForReview() {
         service.getReview("" + movieId).enqueue(new Callback<Review>() {
@@ -199,12 +233,14 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                         .show();
             }
         });
-    };
+    }
+
+    ;
 
     private void responseForReview(Response<Review> response) {
         if (response.isSuccessful()) {
             reviewList = response.body().results;
-            reviewAdapter = new ReviewAdapter(reviewList, DetailActivity.this::onClick);
+            reviewAdapter = new ReviewAdapter(reviewList);
             recyclerViewForReviews.setAdapter(reviewAdapter);
         } else {
             try {
@@ -214,7 +250,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                 e.printStackTrace();
             }
         }
-    };
+    }
+
+    ;
 
     private int deletingFavouriteState() {
         ContentResolver resolver = getContentResolver();

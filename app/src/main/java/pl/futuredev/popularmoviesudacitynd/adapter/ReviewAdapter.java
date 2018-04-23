@@ -15,18 +15,16 @@ import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
 
     private List<ReviewList> reviewLists;
-    private final ReviewAdapterOnClickHandler listClickHandler;
 
     public interface ReviewAdapterOnClickHandler {
         void onClick(int clickedItemIndex);
     }
 
-    public ReviewAdapter(List<ReviewList> reviewLists, ReviewAdapterOnClickHandler listClickHandler) {
+    public ReviewAdapter(List<ReviewList> reviewLists) {
         this.reviewLists = reviewLists;
-        this.listClickHandler = listClickHandler;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder{
 
         TextView reviewTextView;
         TextView reviewAuthor;
@@ -35,13 +33,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             super(itemView);
             this.reviewTextView = itemView.findViewById(R.id.tv_review);
             this.reviewAuthor = itemView.findViewById(R.id.tv_author_review);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            int clickPosition = getAdapterPosition();
-            listClickHandler.onClick(clickPosition);
         }
     }
 
