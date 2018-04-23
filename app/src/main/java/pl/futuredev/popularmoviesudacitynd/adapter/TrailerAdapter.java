@@ -40,7 +40,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
             this.ivImageButton = itemView.findViewById(R.id.iv_image_button);
             this.ivTrailerImage = itemView.findViewById(R.id.iv_trailer_image);
             ivImageButton.setOnClickListener(this);
-            itemView.setOnClickListener(this);
         }
 
         @Override

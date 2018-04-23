@@ -33,6 +33,7 @@ import pl.futuredev.popularmoviesudacitynd.models.Movie;
 import pl.futuredev.popularmoviesudacitynd.models.MovieList;
 import pl.futuredev.popularmoviesudacitynd.service.APIService;
 import pl.futuredev.popularmoviesudacitynd.service.HttpConnector;
+import pl.futuredev.popularmoviesudacitynd.service.InternetReceiver;
 import pl.futuredev.popularmoviesudacitynd.utils.UrlManager;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public static final int RELEASE_DATE = 2;
     public static final int VOTE_AVERAGE = 3;
     public static final int VOTE_COUNT = 4;
-    private static final String STATE_KEY = "state";
+    private static final String POSITION_STATE_KEY = "state";
     private static final String FOV_MOVIES = "favourite";
     private static final String POPULAR_MOVIES = "popular";
     private static final String GRID_RECYCLER_LAYOUT = "grid_layout";
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private String state = "popular";
     private GridLayoutManager gridLayoutManager;
     private LinearLayoutManager linearLayoutManager;
+    private InternetReceiver internetReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,12 +86,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         if (UrlManager.API_KEY.isEmpty()) {
             Toast.makeText(getApplicationContext(), R.string.api_key_message, Toast.LENGTH_LONG).show();
         }
+        internetReceiver = new InternetReceiver();
         service = HttpConnector.getService(APIService.class);
         gridLayoutManager = new GridLayoutManager(this, 2);
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
         if (savedInstanceState != null) {
-            state = savedInstanceState.getString(STATE_KEY);
+            state = savedInstanceState.getString(POSITION_STATE_KEY);
             Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(GRID_RECYCLER_LAYOUT);
             Parcelable linearRecyclerLayoutState = savedInstanceState.getParcelable(LINEAR_RECYCLER_LAYOUT);
             if (linearRecyclerLayoutState != null) {
@@ -116,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(STATE_KEY, state);
+        outState.putString(POSITION_STATE_KEY, state);
         outState.putParcelable(GRID_RECYCLER_LAYOUT,
                 gridLayoutManager.onSaveInstanceState());
         outState.putParcelable(LINEAR_RECYCLER_LAYOUT,
@@ -255,4 +258,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         intent.putExtra("movie", movie.get(clickedItemIndex));
         startActivity(intent);
     }
+
+
 }
