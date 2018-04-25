@@ -32,6 +32,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
+import jp.wasabeef.recyclerview.adapters.SlideInBottomAnimationAdapter;
 import pl.futuredev.popularmoviesudacitynd.adapter.ReviewAdapter;
 import pl.futuredev.popularmoviesudacitynd.adapter.TrailerAdapter;
 import pl.futuredev.popularmoviesudacitynd.data.MoviesContract;
@@ -99,7 +101,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
 
@@ -136,7 +137,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
 
         recyclerViewForTrailers.setLayoutManager(linearLayoutManager);
         recyclerViewForTrailers.setHasFixedSize(true);
-
         recyclerViewForReviews.setLayoutManager(gridLayoutManager);
         recyclerViewForReviews.setHasFixedSize(true);
 
@@ -207,7 +207,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         if (response.isSuccessful()) {
             trailerList = response.body().results;
             trailerAdapter = new TrailerAdapter(trailerList, DetailActivity.this::onClick);
-            recyclerViewForTrailers.setAdapter(trailerAdapter);
+            SlideInBottomAnimationAdapter scaleInAnimationAdapter = new SlideInBottomAnimationAdapter(trailerAdapter);
+            scaleInAnimationAdapter.setDuration(500);
+            scaleInAnimationAdapter.setFirstOnly(false);
+            recyclerViewForTrailers.setAdapter(scaleInAnimationAdapter);
+
         } else {
             try {
                 Toast.makeText(DetailActivity.this, response.errorBody().string(), Toast.LENGTH_SHORT)
@@ -241,7 +245,10 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         if (response.isSuccessful()) {
             reviewList = response.body().results;
             reviewAdapter = new ReviewAdapter(reviewList);
-            recyclerViewForReviews.setAdapter(reviewAdapter);
+            ScaleInAnimationAdapter scaleInAnimationAdapter = new ScaleInAnimationAdapter(reviewAdapter);
+            scaleInAnimationAdapter.setDuration(1650);
+            scaleInAnimationAdapter.setFirstOnly(false);
+            recyclerViewForReviews.setAdapter(scaleInAnimationAdapter);
         } else {
             try {
                 Toast.makeText(DetailActivity.this, response.errorBody().string(), Toast.LENGTH_SHORT)
@@ -302,7 +309,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         Picasso.get().load(imageUrl + movie.getBackdropPath()).into(ivCollapsing);
         tvPlotSynopsis.setText(movie.getOverview());
         tvVoteAverage.setText("" + movie.getVoteAverage() + getString(R.string.scores));
-        tvVoteCount.setText(movie.getVoteCount() + getString(R.string.votes));
+        tvVoteCount.setText(movie.getVoteCount() + " " + getString(R.string.votes));
         Picasso.get().load(imageUrl + movie.getPosterPath()).into(tvImageView);
     }
 

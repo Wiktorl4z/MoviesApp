@@ -15,7 +15,7 @@ public class UrlManager {
     // https://api.themoviedb.org/3/movie/{movie_id}/reviews?api_key
     public static final String REVIEW_URL = "3/movie/{movie_id}/reviews?api_key=" + API_KEY;
     // https://api.themoviedb.org/3/movie/441614/images?api_key=
-    public static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w185";
+    public static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w780";
     public static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
     public static final String REVIEW = "https://www.themoviedb.org/review/";
     // https://img.youtube.com/vi/<insert-youtube-video-id-here>/0.jpg
