@@ -60,6 +60,7 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
         return new ViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TextView titleTextView = holder.titleText;
@@ -75,18 +76,17 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.View
 
         String votes = mCursor.getString(MainActivity.VOTE_AVERAGE);
 
-        String release= mCursor.getString(MainActivity.RELEASE_DATE);
+        String release = mCursor.getString(MainActivity.RELEASE_DATE);
         String year = release.substring(0, Math.min(release.length(), 4));
         tvReleaseDate.setText(year);
 
         ratingBar.setRating(settingRatingBar(votes));
-        tvVoteAverage.setText(mCursor.getString(MainActivity.VOTE_AVERAGE)+ mContext.getString(R.string.scores));
-        tvVoteCount.setText(mCursor.getString(MainActivity.VOTE_COUNT)+ mContext.getString(R.string.votes));
+        tvVoteAverage.setText(mCursor.getString(MainActivity.VOTE_AVERAGE) + mContext.getString(R.string.scores));
+        tvVoteCount.setText(mCursor.getString(MainActivity.VOTE_COUNT) + " " + mContext.getString(R.string.votes));
 
         String imageUrl = UrlManager.IMAGE_BASE_URL;
         String urlId = imageUrl + mCursor.getString(MainActivity.MOVIE_POSTER_PATCH);
         Picasso.get().load(urlId).into(imageView);
-
     }
 
     private int settingRatingBar(String votes) {

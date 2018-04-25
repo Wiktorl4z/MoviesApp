@@ -10,7 +10,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +25,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 import pl.futuredev.popularmoviesudacitynd.adapter.FavouriteAdapter;
 import pl.futuredev.popularmoviesudacitynd.adapter.MovieAdapter;
 import pl.futuredev.popularmoviesudacitynd.data.MoviesContract;
@@ -162,8 +163,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             adapter = new MovieAdapter(movie, MainActivity.this::onClick);
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(gridLayoutManager);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setAdapter(adapter);
+            ScaleInAnimationAdapter scaleInAnimationAdapter = new ScaleInAnimationAdapter(adapter);
+            scaleInAnimationAdapter.setDuration(350);
+            scaleInAnimationAdapter.setFirstOnly(false);
+            recyclerView.setAdapter(scaleInAnimationAdapter);
+
         } else {
             try {
                 Toast.makeText(MainActivity.this, response.errorBody().string(), Toast.LENGTH_SHORT)
@@ -177,8 +181,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private void favouriteMovies() {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setItemAnimator(new SlideInLeftAnimator());
         favouriteAdapter = new FavouriteAdapter(this);
-        recyclerView.setAdapter(favouriteAdapter);
+        ScaleInAnimationAdapter scaleInAnimationAdapter = new ScaleInAnimationAdapter(favouriteAdapter);
+        scaleInAnimationAdapter.setDuration(450);
+        scaleInAnimationAdapter.setFirstOnly(false);
+        recyclerView.setAdapter(scaleInAnimationAdapter);
         showLoading();
         getSupportLoaderManager().initLoader(ID_DETAIL_LOADER, null, this);
     };
@@ -258,6 +266,4 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         intent.putExtra("movie", movie.get(clickedItemIndex));
         startActivity(intent);
     }
-
-
 }
